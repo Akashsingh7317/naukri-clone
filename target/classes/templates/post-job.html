@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Post a Job – NaukriHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/logout}">Logout</a>
+  </div>
+</nav>
+<div class="post-layout">
+  <div style="margin-bottom:2rem">
+    <h2 style="font-size:1.8rem;font-weight:800;color:var(--dark);margin-bottom:0.25rem" th:text="${job.id!=null?'Edit Job Posting':'Post a New Job'}">Post Job</h2>
+    <p style="color:var(--gray-500)">Fill in the details to attract the best candidates</p>
+  </div>
+
+  <form th:action="${job.id!=null?'/employer/edit-job/'+job.id:'/employer/post-job'}" method="post" th:object="${job}">
+    <div class="form-card">
+      <div class="form-card-title"><i class="fas fa-briefcase"></i> Basic Information</div>
+      <div class="form-group">
+        <label class="form-label">Job Title <span>*</span></label>
+        <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. Senior Software Engineer" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Company Name <span>*</span></label>
+          <input type="text" th:field="*{company}" class="form-control" placeholder="Your company name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location <span>*</span></label>
+          <input type="text" th:field="*{location}" class="form-control" placeholder="e.g. Bangalore, Remote" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Job Type</label>
+          <select th:field="*{jobType}" class="form-select">
+            <option value="">Select type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Remote">Remote</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+            <option value="Freelance">Freelance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select th:field="*{category}" class="form-select">
+            <option value="">Select category</option>
+            <option value="IT">Information Technology</option>
+            <option value="Finance">Finance & Accounting</option>
+            <option value="Marketing">Marketing & Sales</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Design">Design & Creative</option>
+            <option value="Education">Education</option>
+            <option value="HR">Human Resources</option>
+            <option value="Operations">Operations</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Salary</label>
+          <input type="text" th:field="*{salary}" class="form-control" placeholder="e.g. ₹8–12 LPA or Negotiable">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Experience Required</label>
+          <input type="text" th:field="*{experience}" class="form-control" placeholder="e.g. 2–4 years">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><i class="fas fa-file-alt"></i> Job Details</div>
+      <div class="form-group">
+        <label class="form-label">Job Description <span>*</span></label>
+        <textarea th:field="*{description}" class="form-control" rows="7" placeholder="Describe the role, responsibilities, and what the day-to-day looks like..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Requirements</label>
+        <textarea th:field="*{requirements}" class="form-control" rows="5" placeholder="List qualifications, education, and experience required..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Required Skills</label>
+        <input type="text" th:field="*{skills}" class="form-control" placeholder="e.g. Java, Spring Boot, MySQL, REST APIs">
+        <p class="form-hint">Separate skills with commas — these appear as tags on your listing</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:flex-end">
+      <a th:href="@{/dashboard}" class="btn btn-ghost"><i class="fas fa-times"></i> Cancel</a>
+      <button type="submit" class="btn btn-primary" style="padding:0.9rem 2.5rem">
+        <i class="fas fa-paper-plane"></i> <span th:text="${job.id!=null?'Update Job':'Post Job'}">Post Job</span>
+      </button>
+    </div>
+  </form>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

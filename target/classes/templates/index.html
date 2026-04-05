@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NaukriHub – Find Your Dream Job in India</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/jobs}"><i class="fas fa-search"></i> <span>Browse Jobs</span></a>
+    <div sec:authorize="isAnonymous()" style="display:flex;align-items:center;gap:0.4rem">
+      <a th:href="@{/login}" class="btn-nav-login"><i class="fas fa-sign-in-alt"></i> <span>Login</span></a>
+      <a th:href="@{/register}" class="btn-nav-primary"><i class="fas fa-user-plus"></i> <span>Register Free</span></a>
+    </div>
+    <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;gap:0.4rem">
+      <a th:href="@{/dashboard}"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+      <a th:href="@{/profile/view}"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
+      <span sec:authorize="hasRole('EMPLOYER')"><a th:href="@{/employer/post-job}" class="btn-nav-primary"><i class="fas fa-plus"></i> <span>Post Job</span></a></span>
+      <a th:href="@{/logout}" style="color:#ef4444 !important;font-weight:600"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      <span th:text="${totalJobs} + ' Jobs Available Right Now'">Jobs Available</span>
+    </div>
+    <h1>Find Your <span class="gradient-text">Dream Job</span><br>Build Your Future</h1>
+    <p>Connect with India's top companies. Discover thousands of verified opportunities across all industries and experience levels.</p>
+
+    <div class="search-wrapper">
+      <form th:action="@{/jobs}" method="get">
+        <div class="search-box">
+          <div class="search-field">
+            <i class="fas fa-search"></i>
+            <input type="text" name="keyword" placeholder="Job title, skills, or company..." autocomplete="off">
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-field">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" name="location" placeholder="City or state...">
+          </div>
+          <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search Jobs</button>
+        </div>
+      </form>
+      <div class="search-tags">
+        <span class="search-tag-label">Trending:</span>
+        <a th:href="@{/jobs(keyword='Software Engineer')}" class="search-tag">Software Engineer</a>
+        <a th:href="@{/jobs(keyword='Data Analyst')}" class="search-tag">Data Analyst</a>
+        <a th:href="@{/jobs(keyword='remote')}" class="search-tag">Remote Jobs</a>
+        <a th:href="@{/jobs(keyword='fresher')}" class="search-tag">Fresher Jobs</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-lbl">Active Jobs</div></div>
+      <div class="stat-item"><div class="stat-num">25K+</div><div class="stat-lbl">Companies</div></div>
+      <div class="stat-item"><div class="stat-num">1M+</div><div class="stat-lbl">Job Seekers</div></div>
+      <div class="stat-item"><div class="stat-num">98%</div><div class="stat-lbl">Success Rate</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Explore Roles</span>
+      <h2 class="section-title">Browse by Category</h2>
+      <p class="section-sub">Discover opportunities tailored to your expertise and passion</p>
+    </div>
+    <div class="categories-grid">
+      <a th:href="@{/jobs(category='IT')}" class="category-card"><span class="cat-icon">💻</span><div class="cat-name">Information Technology</div><div class="cat-count">12,500+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Finance')}" class="category-card"><span class="cat-icon">💰</span><div class="cat-name">Finance & Accounting</div><div class="cat-count">4,200+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Marketing')}" class="category-card"><span class="cat-icon">📢</span><div class="cat-name">Marketing & Sales</div><div class="cat-count">6,800+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Healthcare')}" class="category-card"><span class="cat-icon">🏥</span><div class="cat-name">Healthcare</div><div class="cat-count">3,100+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Engineering')}" class="category-card"><span class="cat-icon">⚙️</span><div class="cat-name">Engineering</div><div class="cat-count">8,400+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Design')}" class="category-card"><span class="cat-icon">🎨</span><div class="cat-name">Design & Creative</div><div class="cat-count">2,900+ Jobs</div></a>
+      <a th:href="@{/jobs(category='Education')}" class="category-card"><span class="cat-icon">📚</span><div class="cat-name">Education</div><div class="cat-count">1,800+ Jobs</div></a>
+      <a th:href="@{/jobs}" class="category-card" style="background:var(--gradient);border-color:transparent"><span class="cat-icon">🔍</span><div class="cat-name" style="color:white">All Categories</div><div class="cat-count" style="color:rgba(255,255,255,0.8)">50,000+ Jobs</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED JOBS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Latest Openings</span>
+      <h2 class="section-title">Featured Jobs</h2>
+      <p class="section-sub">Hand-picked opportunities from verified top employers</p>
+    </div>
+    <div class="jobs-grid" th:if="${not #lists.isEmpty(featuredJobs)}">
+      <div th:each="job,iter : ${featuredJobs}" class="job-card" th:onclick="'window.location=\'/jobs/'+${job.id}+'\''">
+        <div class="job-card-top-bar"></div>
+        <div class="job-card-head">
+          <div class="job-logo-wrap">
+            <div class="job-logo" th:classappend="${iter.index%8==0?'c1':iter.index%8==1?'c2':iter.index%8==2?'c3':iter.index%8==3?'c4':iter.index%8==4?'c5':iter.index%8==5?'c6':iter.index%8==6?'c7':'c8'}" th:text="${#strings.substring(job.company,0,1)}">C</div>
+            <div><div class="job-title-text" th:text="${job.title}">Title</div><div class="job-company-text" th:text="${job.company}">Company</div></div>
+          </div>
+          <span class="job-type-badge" th:text="${job.jobType!=null?job.jobType:'Full-time'}">Full-time</span>
+        </div>
+        <div class="job-meta">
+          <span class="job-meta-item"><i class="fas fa-map-marker-alt" style="color:#4f46e5"></i><span th:text="${job.location}">Location</span></span>
+          <span class="job-meta-item"><i class="fas fa-indian-rupee-sign" style="color:#10b981"></i><span th:text="${job.salary!=null?job.salary:'Negotiable'}">Salary</span></span>
+          <span class="job-meta-item"><i class="fas fa-briefcase" style="color:#f59e0b"></i><span th:text="${job.experience!=null?job.experience:'0+ yrs'}">Exp</span></span>
+        </div>
+        <div class="job-skills" th:if="${job.skills!=null}">
+          <th:block th:each="sk,st : ${#strings.arraySplit(job.skills,',')}">
+            <span class="skill-tag" th:if="${st.index<4}" th:text="${#strings.trim(sk)}"></span>
+          </th:block>
+        </div>
+        <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn-apply-card" onclick="event.stopPropagation()">Apply Now →</a>
+      </div>
+    </div>
+    <div th:if="${#lists.isEmpty(featuredJobs)}" style="text-align:center;padding:4rem;background:white;border-radius:var(--radius)">
+      <div style="font-size:4rem;margin-bottom:1rem">📭</div>
+      <h3 style="color:var(--gray-500)">No jobs yet — be the first employer!</h3>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a th:href="@{/jobs}" class="btn btn-primary btn-lg"><i class="fas fa-briefcase"></i> View All Jobs</a>
+    </div>
+  </div>
+</section>
+
+<!-- TOP COMPANIES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Hiring Now</span>
+      <h2 class="section-title">Top Companies</h2>
+      <p class="section-sub">Join India's most innovative and fastest-growing companies</p>
+    </div>
+    <div class="companies-strip">
+      <div class="company-chip">TCS</div><div class="company-chip">Infosys</div>
+      <div class="company-chip">Wipro</div><div class="company-chip">Flipkart</div>
+      <div class="company-chip">Amazon</div><div class="company-chip">Google</div>
+      <div class="company-chip">Microsoft</div><div class="company-chip">Zomato</div>
+      <div class="company-chip">Swiggy</div><div class="company-chip">Paytm</div>
+      <div class="company-chip">Razorpay</div><div class="company-chip">CRED</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Get Started</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Three simple steps to land your dream job</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step"><div class="step-num">1</div><div class="step-title">Create Your Profile</div><div class="step-desc">Sign up free, add your skills, upload your resume, and build a professional profile that stands out.</div></div>
+      <div class="how-step"><div class="step-num">2</div><div class="step-title">Search & Apply</div><div class="step-desc">Browse thousands of verified listings. Apply in one click and track every application in real-time.</div></div>
+      <div class="how-step"><div class="step-num">3</div><div class="step-title">Get Hired</div><div class="step-desc">Get shortlisted, attend interviews, and land your perfect role at top Indian companies.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container cta-content">
+    <h2>Ready to Find Your Dream Job?</h2>
+    <p>Join over 1 million professionals who found their perfect role on NaukriHub</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a th:href="@{/register}" class="btn-white"><i class="fas fa-rocket"></i> Get Started Free</a>
+      <a th:href="@{/jobs}" class="btn-outline-white"><i class="fas fa-search"></i> Browse Jobs</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><span class="footer-brand-name">NaukriHub</span><p class="footer-tagline">India's #1 job portal connecting talented professionals with top companies across the country.</p></div>
+      <div><h5>For Job Seekers</h5><a th:href="@{/jobs}" class="footer-link">Browse Jobs</a><a th:href="@{/register}" class="footer-link">Create Profile</a><a href="#" class="footer-link">Career Advice</a><a href="#" class="footer-link">Resume Tips</a></div>
+      <div><h5>For Employers</h5><a th:href="@{/register}" class="footer-link">Post a Job</a><a href="#" class="footer-link">Search Resumes</a><a href="#" class="footer-link">Pricing Plans</a><a href="#" class="footer-link">Recruiter Tools</a></div>
+      <div><h5>Company</h5><a href="#" class="footer-link">About Us</a><a href="#" class="footer-link">Contact</a><a href="#" class="footer-link">Privacy Policy</a><a href="#" class="footer-link">Terms of Service</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 NaukriHub. All rights reserved.</span>
+      <span class="footer-copy">Made with ❤️ in India</span>
+    </div>
+  </div>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

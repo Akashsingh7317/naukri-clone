@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Applications – NaukriHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>.page-header{background:var(--gradient-dark);padding:2.5rem 0;color:white;margin-bottom:2rem}</style>
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/employer/post-job}" class="btn-nav-primary"><i class="fas fa-plus"></i> Post Job</a>
+    <a th:href="@{/logout}">Logout</a>
+  </div>
+</nav>
+<div class="page-header">
+  <div class="container">
+    <a th:href="@{/dashboard}" style="color:rgba(255,255,255,0.6);font-size:0.88rem;display:inline-block;margin-bottom:0.75rem"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    <h1 style="font-size:1.85rem;font-weight:800;margin-bottom:0.25rem" th:text="'Applications: '+${job.title}">Applications</h1>
+    <p style="color:rgba(255,255,255,0.65)" th:text="${#lists.size(applications)}+' applications received for '+${job.company}">0 received</p>
+  </div>
+</div>
+<div class="container" style="padding-bottom:3rem">
+  <div class="card">
+    <div th:if="${not #lists.isEmpty(applications)}">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Applicant</th><th>Contact</th><th>Skills</th><th>Applied</th><th>Status</th><th>Update Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="app : ${applications}">
+              <td>
+                <div style="display:flex;align-items:center;gap:0.75rem">
+                  <div style="width:42px;height:42px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;flex-shrink:0" th:text="${#strings.substring(app.applicant.fullName,0,1)}">A</div>
+                  <div>
+                    <div style="font-weight:700;color:var(--dark)" th:text="${app.applicant.fullName}">Name</div>
+                    <div style="font-size:0.78rem;color:var(--gray-400)" th:text="${app.applicant.experience!=null?app.applicant.experience+' exp':'Fresher'}">Exp</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="font-size:0.85rem" th:text="${app.applicant.email}">email</div>
+                <div style="font-size:0.78rem;color:var(--gray-400)" th:text="${app.applicant.phone}">phone</div>
+                <div th:if="${app.applicant.resumeFileName}" style="margin-top:0.3rem">
+                  <a th:href="@{/resume/download/{f}(f=${app.applicant.resumeFileName})}" class="btn btn-sm btn-outline" style="padding:0.25rem 0.6rem;font-size:0.75rem"><i class="fas fa-download"></i> Resume</a>
+                </div>
+              </td>
+              <td>
+                <div th:if="${app.applicant.skills}">
+                  <th:block th:each="sk,st : ${#strings.arraySplit(app.applicant.skills,',')}">
+                    <span class="skill-tag" th:if="${st.index<3}" style="font-size:0.73rem;padding:0.2rem 0.5rem" th:text="${#strings.trim(sk)}"></span>
+                  </th:block>
+                </div>
+                <span th:if="${app.applicant.skills==null}" style="color:var(--gray-400);font-size:0.83rem">–</span>
+              </td>
+              <td style="font-size:0.85rem;color:var(--gray-600)" th:text="${#temporals.format(app.appliedAt,'dd MMM yyyy')}">Date</td>
+              <td>
+                <span class="status-pill" th:classappend="${app.status.name()=='APPLIED'?'status-applied':app.status.name()=='SHORTLISTED'?'status-shortlisted':app.status.name()=='INTERVIEW'?'status-interview':app.status.name()=='SELECTED'?'status-selected':'status-rejected'}" th:text="${app.status}">STATUS</span>
+              </td>
+              <td>
+                <form th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post">
+                  <input type="hidden" name="jobId" th:value="${job.id}">
+                  <select name="status" class="form-select" style="padding:0.35rem 2rem 0.35rem 0.6rem;font-size:0.82rem;width:auto;border-width:1.5px" onchange="this.form.submit()">
+                    <option value="APPLIED" th:selected="${app.status.name()=='APPLIED'}">Applied</option>
+                    <option value="SHORTLISTED" th:selected="${app.status.name()=='SHORTLISTED'}">Shortlisted ⭐</option>
+                    <option value="INTERVIEW" th:selected="${app.status.name()=='INTERVIEW'}">Interview 📞</option>
+                    <option value="SELECTED" th:selected="${app.status.name()=='SELECTED'}">Selected ✅</option>
+                    <option value="REJECTED" th:selected="${app.status.name()=='REJECTED'}">Rejected ❌</option>
+                  </select>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div th:if="${#lists.isEmpty(applications)}" style="text-align:center;padding:4rem">
+      <div style="font-size:4rem;margin-bottom:1rem">📭</div>
+      <h3 style="color:var(--gray-500)">No applications yet</h3>
+      <p style="color:var(--gray-400);margin-top:0.5rem">Share your job posting for more visibility</p>
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

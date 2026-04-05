@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title th:text="${job.title}+' – NaukriHub'">Job Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>
+.job-detail-hero{background:var(--gradient-dark);padding:2.75rem 0;color:white}
+.detail-body-text{line-height:1.85;color:var(--gray-600);font-size:0.95rem;white-space:pre-line}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/jobs}"><i class="fas fa-search"></i> <span>Browse Jobs</span></a>
+    <div sec:authorize="isAnonymous()" style="display:flex;align-items:center;gap:0.4rem">
+      <a th:href="@{/login}" class="btn-nav-login">Login</a>
+      <a th:href="@{/register}" class="btn-nav-primary">Register</a>
+    </div>
+    <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;gap:0.4rem">
+      <a th:href="@{/dashboard}">Dashboard</a>
+      <a th:href="@{/profile/view}">Profile</a>
+      <a th:href="@{/logout}">Logout</a>
+    </span>
+  </div>
+</nav>
+
+<div class="job-detail-hero">
+  <div class="container">
+    <div style="margin-bottom:1.25rem">
+      <a th:href="@{/jobs}" style="color:rgba(255,255,255,0.6);font-size:0.88rem">
+        <i class="fas fa-arrow-left"></i> Back to Jobs
+      </a>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+      <div style="width:80px;height:80px;border-radius:18px;background:linear-gradient(135deg,#4f46e5,#06b6d4);
+                  display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;
+                  color:white;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,0.3)"
+           th:text="${#strings.substring(job.company,0,1)}">C</div>
+      <div>
+        <h1 style="font-size:1.85rem;font-weight:800;margin-bottom:0.3rem" th:text="${job.title}">Title</h1>
+        <p style="color:rgba(255,255,255,0.7)" th:text="${job.company}+' · '+${job.location}">Co · Loc</p>
+        <div style="display:flex;gap:0.75rem;margin-top:0.85rem;flex-wrap:wrap">
+          <span class="job-type-badge" th:text="${job.jobType!=null?job.jobType:'Full-time'}">Full-time</span>
+          <span th:if="${job.category}" class="job-type-badge"
+                style="background:rgba(6,182,212,0.2);color:#38bdf8;border-color:rgba(6,182,212,0.3)"
+                th:text="${job.category}">Cat</span>
+          <span class="job-type-badge"
+                style="background:rgba(16,185,129,0.2);color:#34d399;border-color:rgba(16,185,129,0.3)"
+                th:text="${job.applicationCount}+' applicants'">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ✅ SUCCESS — Flash attribute se aata hai (redirect ke baad) -->
+  <div th:if="${applySuccess}" class="alert alert-success" style="margin-top:1.5rem">
+    <i class="fas fa-check-circle"></i>
+    Application submitted successfully! The employer will review your profile. Good luck! 🎉
+  </div>
+
+  <!-- ✅ ERROR — Flash attribute se aata hai (short safe message) -->
+  <div th:if="${applyError}" class="alert alert-danger" style="margin-top:1.5rem">
+    <i class="fas fa-exclamation-circle"></i>
+    <span th:text="${applyError}">Something went wrong.</span>
+  </div>
+
+  <div class="detail-layout">
+    <!-- LEFT COLUMN -->
+    <div>
+      <div class="detail-section">
+        <h3><i class="fas fa-info-circle" style="color:var(--primary)"></i> Job Overview</h3>
+        <div class="info-pills">
+          <div class="info-pill">
+            <div class="info-pill-label">Location</div>
+            <div class="info-pill-value" th:text="${job.location}">–</div>
+          </div>
+          <div class="info-pill">
+            <div class="info-pill-label">Salary</div>
+            <div class="info-pill-value" th:text="${job.salary!=null?job.salary:'Negotiable'}">–</div>
+          </div>
+          <div class="info-pill">
+            <div class="info-pill-label">Experience</div>
+            <div class="info-pill-value" th:text="${job.experience!=null?job.experience:'Not specified'}">–</div>
+          </div>
+          <div class="info-pill">
+            <div class="info-pill-label">Job Type</div>
+            <div class="info-pill-value" th:text="${job.jobType!=null?job.jobType:'Full-time'}">–</div>
+          </div>
+          <div class="info-pill">
+            <div class="info-pill-label">Category</div>
+            <div class="info-pill-value" th:text="${job.category!=null?job.category:'General'}">–</div>
+          </div>
+          <div class="info-pill">
+            <div class="info-pill-label">Posted On</div>
+            <div class="info-pill-value" th:text="${#temporals.format(job.postedAt,'dd MMM yyyy')}">–</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section" th:if="${job.description}">
+        <h3><i class="fas fa-file-alt" style="color:var(--primary)"></i> Job Description</h3>
+        <div class="detail-body-text" th:text="${job.description}">Description</div>
+      </div>
+
+      <div class="detail-section" th:if="${job.requirements}">
+        <h3><i class="fas fa-list-check" style="color:var(--primary)"></i> Requirements</h3>
+        <div class="detail-body-text" th:text="${job.requirements}">Requirements</div>
+      </div>
+
+      <div class="detail-section" th:if="${job.skills}">
+        <h3><i class="fas fa-code" style="color:var(--primary)"></i> Required Skills</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+          <th:block th:each="sk : ${#strings.arraySplit(job.skills,',')}">
+            <span class="skill-tag" style="font-size:0.88rem;padding:0.4rem 0.9rem"
+                  th:text="${#strings.trim(sk)}"></span>
+          </th:block>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="detail-sticky">
+      <div class="apply-sidebar-card">
+        <h3 style="font-size:1.05rem;font-weight:800;color:var(--dark);margin-bottom:1.25rem">
+          Apply for this Role
+        </h3>
+
+        <!-- NOT LOGGED IN -->
+        <div sec:authorize="isAnonymous()">
+          <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:1.25rem">
+            Sign in to apply for this position
+          </p>
+          <a th:href="@{/login}" class="btn btn-primary btn-block" style="margin-bottom:0.75rem">
+            <i class="fas fa-sign-in-alt"></i> Sign In to Apply
+          </a>
+          <a th:href="@{/register}" class="btn btn-outline btn-block">
+            <i class="fas fa-user-plus"></i> Create Free Account
+          </a>
+        </div>
+
+        <!-- LOGGED IN: ALREADY APPLIED (check both flash + db flag) -->
+        <div sec:authorize="isAuthenticated()"
+             th:if="${hasApplied or applySuccess}">
+          <div class="alert alert-success" style="margin-bottom:1.25rem;font-size:0.88rem">
+            <i class="fas fa-check-circle"></i> You've already applied for this job!
+          </div>
+          <a th:href="@{/dashboard}" class="btn btn-outline btn-block">
+            <i class="fas fa-chart-line"></i> View My Applications
+          </a>
+        </div>
+
+        <!-- LOGGED IN: NOT YET APPLIED -->
+        <div sec:authorize="isAuthenticated()"
+             th:if="${!hasApplied and !applySuccess}">
+          <button onclick="document.getElementById('applyModal').classList.add('open')"
+                  class="btn btn-primary btn-block"
+                  style="padding:1rem;font-size:1rem">
+            <i class="fas fa-paper-plane"></i> Apply Now
+          </button>
+          <p style="text-align:center;color:var(--gray-400);font-size:0.8rem;margin-top:0.75rem">
+            Your profile will be shared with the employer
+          </p>
+        </div>
+
+        <!-- Stats -->
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--gray-100)">
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.5rem">
+            <span style="color:var(--gray-500)">Total Applications</span>
+            <strong th:text="${job.applicationCount}">0</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem">
+            <span style="color:var(--gray-500)">Posted On</span>
+            <strong th:text="${#temporals.format(job.postedAt,'dd MMM yyyy')}">–</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Card -->
+      <div class="apply-sidebar-card">
+        <h3 style="font-size:0.95rem;font-weight:800;color:var(--dark);margin-bottom:1rem">
+          About the Company
+        </h3>
+        <div style="display:flex;align-items:center;gap:0.9rem;margin-bottom:0.85rem">
+          <div style="width:50px;height:50px;border-radius:11px;background:var(--gradient);
+                      display:flex;align-items:center;justify-content:center;
+                      color:white;font-weight:800;font-size:1.1rem"
+               th:text="${#strings.substring(job.company,0,1)}">C</div>
+          <div>
+            <div style="font-weight:700;color:var(--dark)" th:text="${job.company}">Company</div>
+            <div style="font-size:0.78rem;color:var(--success);font-weight:600">
+              <i class="fas fa-circle-check"></i> Verified Employer
+            </div>
+          </div>
+        </div>
+        <p style="color:var(--gray-500);font-size:0.86rem;line-height:1.65">
+          A leading company offering excellent growth opportunities for talented professionals.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Apply Modal -->
+<div class="modal-bg" id="applyModal">
+  <div class="modal-box">
+    <h3 style="font-size:1.3rem;font-weight:800;color:var(--dark);margin-bottom:0.35rem">
+      Submit Application
+    </h3>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:1.75rem"
+       th:text="'Applying for '+${job.title}+' at '+${job.company}">Role</p>
+    <form th:action="@{/jobs/{id}/apply(id=${job.id})}" method="post">
+      <div class="form-group">
+        <label class="form-label">
+          Cover Letter
+          <span style="color:var(--gray-400);font-weight:400">(Optional)</span>
+        </label>
+        <textarea name="coverLetter" class="form-control" rows="5"
+                  placeholder="Introduce yourself and explain why you're a great fit..."></textarea>
+        <p class="form-hint">A good cover letter increases your chances significantly</p>
+      </div>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.25rem">
+        <button type="button"
+                onclick="document.getElementById('applyModal').classList.remove('open')"
+                class="btn btn-ghost">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i> Submit Application
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="footer" style="margin-top:0">
+  <div class="container">
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 NaukriHub. Made with ❤️ in India</span>
+    </div>
+  </div>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+  // Close modal on background click
+  document.getElementById('applyModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('applyModal').classList.remove('open');
+  });
+</script>
+</body>
+</html>

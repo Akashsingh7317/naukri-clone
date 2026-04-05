@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Employer Dashboard – NaukriHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/jobs}">Browse Jobs</a>
+    <a th:href="@{/dashboard}" class="active">Dashboard</a>
+    <a th:href="@{/employer/post-job}" class="btn-nav-primary"><i class="fas fa-plus"></i> Post Job</a>
+    <a th:href="@{/logout}">Logout</a>
+  </div>
+</nav>
+<div class="container">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div style="text-align:center;padding-bottom:1.25rem">
+        <div class="sidebar-avatar" style="background:linear-gradient(135deg,#06b6d4,#0284c7)" th:text="${#strings.substring(user.fullName,0,1)}">E</div>
+        <div class="sidebar-name" th:text="${user.fullName}">Employer</div>
+        <div class="sidebar-email" th:text="${user.email}">email</div>
+        <span class="skill-tag" style="margin-top:0.5rem;display:inline-block;background:rgba(6,182,212,0.1);color:#0284c7">Employer</span>
+      </div>
+      <div class="sidebar-divider"></div>
+      <nav class="sidebar-menu">
+        <a th:href="@{/dashboard}" class="sidebar-link active"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a th:href="@{/employer/post-job}" class="sidebar-link"><i class="fas fa-plus-circle"></i> Post New Job</a>
+        <a th:href="@{/profile}" class="sidebar-link"><i class="fas fa-building"></i> Company Profile</a>
+        <a th:href="@{/logout}" class="sidebar-link logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
+    <main>
+      <div th:if="${param.jobPosted}" class="alert alert-success"><i class="fas fa-check-circle"></i> Job posted successfully!</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+        <div>
+          <h2 style="font-size:1.5rem;font-weight:800;color:var(--dark)" th:text="'Welcome, '+${user.fullName}+'! 🏢'">Welcome!</h2>
+          <p style="color:var(--gray-500)">Manage your job postings and applications</p>
+        </div>
+        <a th:href="@{/employer/post-job}" class="btn btn-primary"><i class="fas fa-plus"></i> Post New Job</a>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon-box" style="background:rgba(79,70,229,0.1)">📢</div><div class="stat-info"><h3 th:text="${#lists.size(postedJobs)}">0</h3><p>Jobs Posted</p></div></div>
+        <div class="stat-card"><div class="stat-icon-box" style="background:rgba(6,182,212,0.1)">👥</div><div class="stat-info"><h3 th:text="${postedJobs.stream().mapToInt(j->j.applicationCount).sum()}">0</h3><p>Total Applications</p></div></div>
+        <div class="stat-card"><div class="stat-icon-box" style="background:rgba(16,185,129,0.1)">✅</div><div class="stat-info"><h3 th:text="${postedJobs.?[active].size()}">0</h3><p>Active Jobs</p></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-briefcase" style="color:var(--primary)"></i> My Job Postings</span>
+        </div>
+        <div th:if="${not #lists.isEmpty(postedJobs)}">
+          <div th:each="job : ${postedJobs}" style="border:1.5px solid var(--gray-100);border-radius:var(--radius);padding:1.25rem;margin-bottom:0.75rem;transition:var(--transition)" onmouseover="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseout="this.style.borderColor='var(--gray-100)'">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+              <div>
+                <div style="font-weight:800;color:var(--dark);font-size:1rem;margin-bottom:0.3rem" th:text="${job.title}">Title</div>
+                <div style="font-size:0.85rem;color:var(--gray-500)">
+                  <span th:text="${job.location}">Loc</span> · <span th:text="${job.jobType!=null?job.jobType:'Full-time'}">Type</span> · <strong th:text="${job.applicationCount}+' applicants'">0</strong>
+                </div>
+                <div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap">
+                  <span class="skill-tag" th:if="${job.salary}" th:text="'₹ '+${job.salary}"></span>
+                  <span class="skill-tag" th:if="${job.category}" th:text="${job.category}"></span>
+                </div>
+              </div>
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:flex-start">
+                <a th:href="@{/employer/applications/{id}(id=${job.id})}" class="btn btn-outline btn-sm"><i class="fas fa-users"></i> Applications (<span th:text="${job.applicationCount}">0</span>)</a>
+                <a th:href="@{/employer/edit-job/{id}(id=${job.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                <form th:action="@{/employer/delete-job/{id}(id=${job.id})}" method="post" style="display:inline" onsubmit="return confirm('Delete this job?')">
+                  <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:if="${#lists.isEmpty(postedJobs)}" style="text-align:center;padding:3rem">
+          <div style="font-size:3rem;margin-bottom:1rem">📭</div>
+          <h3 style="color:var(--gray-500);margin-bottom:0.5rem">No jobs posted yet</h3>
+          <a th:href="@{/employer/post-job}" class="btn btn-primary" style="margin-top:1.25rem"><i class="fas fa-plus"></i> Post First Job</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

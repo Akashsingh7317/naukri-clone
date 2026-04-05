@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Edit Profile – NaukriHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>
+.ep-layout { display:grid; grid-template-columns:280px 1fr; gap:1.5rem; padding:1.75rem 0 4rem; align-items:start; }
+.ep-sidebar { position:sticky; top:80px; }
+.ep-sidebar-card { background:white; border-radius:var(--radius); border:1px solid var(--gray-100); padding:1.5rem; text-align:center; box-shadow:var(--shadow-xs); margin-bottom:1rem; }
+.ep-avatar-wrap { position:relative; width:96px; height:96px; margin:0 auto 1rem; cursor:pointer; }
+.ep-avatar-wrap:hover .ep-cam-overlay { opacity:1; }
+.ep-avatar-img { width:96px; height:96px; border-radius:50%; object-fit:cover; border:3px solid var(--primary-light); box-shadow:0 4px 16px rgba(79,70,229,0.25); }
+.ep-avatar-letter { width:96px; height:96px; border-radius:50%; background:var(--gradient); display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:800; color:white; box-shadow:0 4px 16px rgba(79,70,229,0.25); }
+.ep-cam-overlay { position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:0.3s; color:white; font-size:0.7rem; gap:3px; }
+.ep-cam-overlay i { font-size:1.2rem; }
+#sidePhotoInput { display:none; }
+.ep-strength-wrap { margin:1rem 0; text-align:left; }
+.ep-strength-bar-bg { background:var(--gray-100); border-radius:100px; height:7px; overflow:hidden; margin:0.4rem 0; }
+.ep-strength-bar { height:100%; border-radius:100px; background:var(--gradient); transition:width 1.2s ease; }
+.ep-menu { margin-top:1rem; border-top:1px solid var(--gray-100); padding-top:1rem; display:flex; flex-direction:column; gap:2px; }
+.ep-menu-item { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 0.75rem; border-radius:var(--radius-sm); font-size:0.87rem; font-weight:500; color:var(--gray-600); transition:var(--transition-fast); text-decoration:none; }
+.ep-menu-item:hover { background:var(--gray-50); color:var(--primary); }
+.ep-menu-item.active { background:rgba(79,70,229,0.08); color:var(--primary); font-weight:700; }
+.ep-menu-item i { width:18px; text-align:center; font-size:0.9rem; }
+.ep-menu-item.view-btn { background:var(--gradient); color:white; font-weight:700; margin-bottom:0.25rem; }
+.ep-menu-item.view-btn:hover { opacity:0.9; }
+.ep-section { background:white; border-radius:var(--radius); border:1px solid var(--gray-100); margin-bottom:1rem; box-shadow:var(--shadow-xs); overflow:hidden; }
+.ep-section-head { padding:1.1rem 1.5rem; border-bottom:1px solid var(--gray-100); display:flex; align-items:center; gap:0.6rem; }
+.ep-section-head i { color:var(--primary); }
+.ep-section-title { font-size:0.95rem; font-weight:800; color:var(--dark); }
+.ep-section-body { padding:1.25rem 1.5rem; }
+.form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.upload-zone { border:2px dashed var(--gray-200); border-radius:var(--radius-sm); padding:2rem 1rem; text-align:center; cursor:pointer; transition:var(--transition); background:var(--gray-50); }
+.upload-zone:hover { border-color:var(--primary); background:rgba(79,70,229,0.03); }
+.upload-zone input { display:none; }
+.upload-zone-icon { font-size:2.2rem; color:var(--primary); margin-bottom:0.6rem; }
+.upload-zone-text { font-weight:700; color:var(--gray-700); font-size:0.9rem; }
+.upload-zone-sub { font-size:0.78rem; color:var(--gray-400); margin-top:0.25rem; }
+.resume-file-badge { display:inline-flex; align-items:center; gap:0.6rem; background:rgba(16,185,129,0.1); color:#065f46; border:1px solid rgba(16,185,129,0.25); padding:0.6rem 1rem; border-radius:var(--radius-sm); font-size:0.85rem; font-weight:600; margin-bottom:1rem; width:100%; }
+@media(max-width:900px){.ep-layout{grid-template-columns:1fr}.ep-sidebar{position:static}.form-row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/jobs}">Browse Jobs</a>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/profile/view}" class="active">Profile</a>
+    <a th:href="@{/logout}">Logout</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="ep-layout">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="ep-sidebar">
+      <div class="ep-sidebar-card">
+        <!-- Sidebar quick photo change -->
+        <form id="sidePhotoForm" th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="fullName"       th:value="${user.fullName}">
+          <input type="hidden" name="phone"          th:value="${user.phone}">
+          <input type="hidden" name="location"       th:value="${user.location}">
+          <input type="hidden" name="qualification"  th:value="${user.qualification}">
+          <input type="hidden" name="skills"         th:value="${user.skills}">
+          <input type="hidden" name="experience"     th:value="${user.experience}">
+          <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+          <input type="hidden" name="expectedSalary" th:value="${user.expectedSalary}">
+          <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+          <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+          <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+          <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+          <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+          <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+          <input type="file" name="photoFile" id="sidePhotoInput" accept=".jpg,.jpeg,.png,.webp" onchange="sidePhotoSubmit(this)">
+        </form>
+
+        <div class="ep-avatar-wrap" onclick="document.getElementById('sidePhotoInput').click()" title="Click to change photo">
+          <img th:if="${user.profilePhotoFileName}" th:src="@{/photo/{f}(f=${user.profilePhotoFileName})}" class="ep-avatar-img" id="sideAvatarImg" alt="Photo">
+          <div th:unless="${user.profilePhotoFileName}" class="ep-avatar-letter" id="sideAvatarLetter" th:text="${#strings.substring(user.fullName,0,1)}">A</div>
+          <div class="ep-cam-overlay"><i class="fas fa-camera"></i><span>Change</span></div>
+        </div>
+
+        <h3 style="font-weight:800;color:var(--dark);font-size:1rem" th:text="${user.fullName}">Name</h3>
+        <p style="font-size:0.82rem;color:var(--gray-500);margin-top:0.15rem" th:text="${user.role.name()=='JOB_SEEKER'?'Job Seeker':'Employer'}">Role</p>
+        <p th:if="${user.location}" style="font-size:0.8rem;color:var(--gray-400)" th:text="${user.location}">Location</p>
+        <div th:if="${user.qualification}" style="margin-top:0.4rem">
+          <span style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(79,70,229,0.08);color:var(--primary);border:1px solid rgba(79,70,229,0.15);padding:0.28rem 0.7rem;border-radius:100px;font-size:0.78rem;font-weight:600">
+            <i class="fas fa-graduation-cap"></i><span th:text="${user.qualification}">Qual</span>
+          </span>
+        </div>
+
+        <!-- Profile Strength -->
+        <div class="ep-strength-wrap">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem">
+            <span style="font-weight:700;color:var(--gray-700)">Profile Strength</span>
+            <span style="font-weight:800;color:var(--primary)" id="pctLabel">0%</span>
+          </div>
+          <div class="ep-strength-bar-bg"><div class="ep-strength-bar" id="strengthBar" style="width:0%"></div></div>
+          <p style="font-size:0.75rem;color:var(--gray-400)" id="strengthLabel">Calculating...</p>
+        </div>
+
+        <!-- Resume badge -->
+        <div th:if="${user.resumeFileName}" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:0.75rem;text-align:left">
+          <p style="font-size:0.73rem;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">Resume</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem">
+            <span style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(16,185,129,0.1);color:var(--success);border:1px solid rgba(16,185,129,0.25);padding:0.3rem 0.7rem;border-radius:100px;font-size:0.78rem;font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              <i class="fas fa-file-pdf"></i><span th:text="${user.resumeOriginalName?:user.resumeFileName}">file</span>
+            </span>
+            <a th:href="@{/resume/download/{f}(f=${user.resumeFileName})}" class="btn btn-sm btn-outline" style="padding:0.3rem 0.6rem;font-size:0.75rem"><i class="fas fa-download"></i></a>
+          </div>
+        </div>
+
+        <!-- Sidebar menu -->
+        <div class="ep-menu">
+          <a th:href="@{/profile/view}" class="ep-menu-item view-btn"><i class="fas fa-eye"></i> View Full Profile</a>
+          <a th:href="@{/dashboard}" class="ep-menu-item"><i class="fas fa-th-large"></i> Dashboard</a>
+          <a th:href="@{/jobs}" class="ep-menu-item"><i class="fas fa-search"></i> Browse Jobs</a>
+          <a th:href="@{/logout}" class="ep-menu-item" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN FORM ── -->
+    <main>
+      <div th:if="${param.updated}" class="alert alert-success" style="margin-bottom:1rem"><i class="fas fa-check-circle"></i> Profile updated successfully!</div>
+      <div th:if="${error}" class="alert alert-danger" style="margin-bottom:1rem"><i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span></div>
+
+      <form th:action="@{/profile/update}" method="post" th:object="${user}" enctype="multipart/form-data">
+
+        <!-- PERSONAL INFO -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-user"></i><span class="ep-section-title">Personal Information</span></div>
+          <div class="ep-section-body">
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label">Full Name <span style="color:var(--danger)">*</span></label>
+                <input type="text" th:field="*{fullName}" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" th:field="*{phone}" class="form-control" placeholder="+91 XXXXX XXXXX">
+              </div>
+            </div>
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> Location</label>
+                <input type="text" th:field="*{location}" class="form-control" placeholder="City, State">
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i class="fas fa-graduation-cap" style="color:var(--primary)"></i> Highest Qualification</label>
+                <select th:field="*{qualification}" class="form-select">
+                  <option value="">-- Select Qualification --</option>
+                  <option>10th Pass</option><option>12th Pass</option><option>Diploma</option>
+                  <option>B.Tech / B.E.</option><option>BCA</option><option>B.Sc</option>
+                  <option>B.Com</option><option>BA</option><option>BBA</option>
+                  <option>MCA</option><option>M.Tech</option><option>MBA</option>
+                  <option>M.Sc</option><option>MA</option><option>PhD</option><option>Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE PHOTO -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-camera"></i><span class="ep-section-title">Profile Photo</span></div>
+          <div class="ep-section-body">
+            <div th:if="${user.profilePhotoFileName}" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;background:var(--gray-50);padding:0.85rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+              <img th:src="@{/photo/{f}(f=${user.profilePhotoFileName})}" style="width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid var(--primary-light)" alt="Photo">
+              <div><p style="font-weight:700;font-size:0.88rem;color:var(--dark)">Current Photo</p><p style="font-size:0.78rem;color:var(--gray-400)">Upload below to replace</p></div>
+            </div>
+            <label class="upload-zone" for="photoFileInput" id="photoZone">
+              <input type="file" name="photoFile" id="photoFileInput" accept=".jpg,.jpeg,.png,.webp" onchange="previewPhoto(this)">
+              <div class="upload-zone-icon"><i class="fas fa-user-circle"></i></div>
+              <div class="upload-zone-text" id="photoZoneText">Click to upload profile photo</div>
+              <div class="upload-zone-sub">JPG, PNG, WEBP · Max 5MB</div>
+            </label>
+            <div id="photoPreviewBox" style="display:none;margin-top:0.75rem;text-align:center">
+              <img id="photoPreviewImg" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--primary-light)" src="" alt="preview">
+              <p style="font-size:0.8rem;color:var(--success);font-weight:600;margin-top:0.4rem">✅ Ready to upload</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFESSIONAL DETAILS -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-briefcase"></i><span class="ep-section-title">Professional Details</span></div>
+          <div class="ep-section-body">
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label">Total Experience</label>
+                <input type="text" th:field="*{experience}" class="form-control" placeholder="e.g. 3 years">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Current Salary</label>
+                <input type="text" th:field="*{currentSalary}" class="form-control" placeholder="e.g. ₹6 LPA">
+              </div>
+            </div>
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label">Expected Salary</label>
+                <input type="text" th:field="*{expectedSalary}" class="form-control" placeholder="e.g. ₹10 LPA">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notice Period</label>
+                <input type="text" th:field="*{noticePeriod}" class="form-control" placeholder="e.g. 15 Days, Immediately">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Key Skills</label>
+              <input type="text" th:field="*{skills}" class="form-control" placeholder="e.g. Java, Spring Boot, MySQL">
+              <p class="form-hint">Separate with commas</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESUME HEADLINE -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-heading"></i><span class="ep-section-title">Resume Headline</span></div>
+          <div class="ep-section-body">
+            <div class="form-group">
+              <input type="text" th:field="*{resumeHeadline}" class="form-control" placeholder='"Java Developer | 3 Years | Spring Boot Expert"' maxlength="200">
+              <p class="form-hint">Shows on your profile — keep it concise and impactful</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE SUMMARY -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-align-left"></i><span class="ep-section-title">Profile Summary</span></div>
+          <div class="ep-section-body">
+            <div class="form-group">
+              <textarea th:field="*{profileSummary}" class="form-control" rows="5" placeholder="Write a brief professional summary highlighting your skills, experience and career objectives..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ONLINE PRESENCE -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-globe"></i><span class="ep-section-title">Online Presence &amp; Links</span></div>
+          <div class="ep-section-body">
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label"><i class="fab fa-linkedin" style="color:#0077B5"></i> LinkedIn URL</label>
+                <input type="url" th:field="*{linkedinUrl}" class="form-control" placeholder="https://linkedin.com/in/yourname">
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i class="fab fa-github"></i> GitHub URL</label>
+                <input type="url" th:field="*{githubUrl}" class="form-control" placeholder="https://github.com/yourname">
+              </div>
+            </div>
+            <div class="form-row2">
+              <div class="form-group">
+                <label class="form-label">Portfolio / Website</label>
+                <input type="url" th:field="*{portfolioUrl}" class="form-control" placeholder="https://yourwebsite.com">
+              </div>
+              <div class="form-group">
+                <!-- spacer -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESUME UPLOAD -->
+        <div class="ep-section">
+          <div class="ep-section-head"><i class="fas fa-file-upload"></i><span class="ep-section-title">Resume Upload</span></div>
+          <div class="ep-section-body">
+            <div th:if="${user.resumeFileName}" class="resume-file-badge">
+              <i class="fas fa-file-pdf" style="color:#ef4444;font-size:1.1rem"></i>
+              <span th:text="${user.resumeOriginalName?:user.resumeFileName}">file</span>
+              <a th:href="@{/resume/download/{f}(f=${user.resumeFileName})}" style="margin-left:auto;color:var(--success)"><i class="fas fa-download"></i></a>
+            </div>
+            <label class="upload-zone" for="resumeFileInput" id="resumeZone">
+              <input type="file" name="resumeFile" id="resumeFileInput" accept=".pdf,.doc,.docx" onchange="resumeSelected(this)">
+              <div class="upload-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+              <div class="upload-zone-text" id="resumeZoneText">Click to upload or drag &amp; drop</div>
+              <div class="upload-zone-sub">PDF, DOC, DOCX · Max 10MB</div>
+            </label>
+          </div>
+        </div>
+
+        <!-- SAVE BUTTONS -->
+        <div style="display:flex;gap:1rem;justify-content:flex-end;padding-top:0.5rem">
+          <a th:href="@{/profile/view}" class="btn btn-ghost"><i class="fas fa-times"></i> Cancel</a>
+          <button type="submit" class="btn btn-primary" style="padding:0.9rem 2.5rem;font-size:1rem">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><span class="footer-copy">© 2025 NaukriHub. Made with ❤️ in India</span></div></div></footer>
+
+<script th:src="@{/js/main.js}"></script>
+<!-- Profile data for JS -->
+<div id="profileDataEl" style="display:none"
+     th:data-name="${user.fullName}"
+     th:data-phone="${user.phone}"
+     th:data-loc="${user.location}"
+     th:data-qual="${user.qualification}"
+     th:data-skills="${user.skills}"
+     th:data-exp="${user.experience}"
+     th:data-resume="${user.resumeFileName}"
+     th:data-photo="${user.profilePhotoFileName}"
+     th:data-headline="${user.resumeHeadline}"
+     th:data-summary="${user.profileSummary}">
+</div>
+<script>
+// Profile Strength - read from data attributes
+window.addEventListener('load', () => {
+  const el = document.getElementById('profileDataEl');
+  if (!el) return;
+  const vals = [
+    el.dataset.name, el.dataset.phone, el.dataset.loc,
+    el.dataset.qual, el.dataset.skills, el.dataset.exp,
+    el.dataset.resume, el.dataset.photo, el.dataset.headline, el.dataset.summary
+  ];
+  const filled = vals.filter(v => v && v.trim() !== '' && v !== 'null').length;
+  const pct = Math.round((filled / vals.length) * 100);
+  setTimeout(() => {
+    document.getElementById('strengthBar').style.width = pct + '%';
+    document.getElementById('pctLabel').textContent = pct + '%';
+    const lbl = pct >= 100 ? 'Profile complete! 🎉' : pct >= 75 ? 'Almost there!' : pct >= 50 ? 'Halfway done' : pct >= 25 ? 'Getting started' : 'Fill your details!';
+    document.getElementById('strengthLabel').textContent = lbl;
+  }, 400);
+});
+
+// Side photo quick-change
+function sidePhotoSubmit(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('sideAvatarImg');
+    const ltr = document.getElementById('sideAvatarLetter');
+    if (img) img.src = e.target.result;
+    else if (ltr) {
+      const newImg = document.createElement('img');
+      newImg.id = 'sideAvatarImg'; newImg.className = 'ep-avatar-img';
+      newImg.src = e.target.result; newImg.alt = 'Photo';
+      ltr.replaceWith(newImg);
+    }
+  };
+  reader.readAsDataURL(input.files[0]);
+  document.getElementById('sidePhotoForm').submit();
+}
+
+// Main form photo preview
+function previewPhoto(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('photoPreviewImg').src = e.target.result;
+    document.getElementById('photoPreviewBox').style.display = 'block';
+    document.getElementById('photoZoneText').textContent = '✅ ' + input.files[0].name;
+    document.getElementById('photoZone').style.borderColor = 'var(--success)';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// Resume selected
+function resumeSelected(input) {
+  if (!input.files[0]) return;
+  document.getElementById('resumeZoneText').textContent = '✅ ' + input.files[0].name;
+  document.getElementById('resumeZone').style.borderColor = 'var(--success)';
+  document.getElementById('resumeZone').style.background = 'rgba(16,185,129,0.04)';
+}
+</script>
+</body>
+</html>

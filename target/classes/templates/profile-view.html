@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Profile – NaukriHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<style>
+body{background:#f5f5f5}
+.pv-wrap{max-width:1240px;margin:0 auto;padding:1.5rem 1.5rem 4rem;display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start}
+
+/* HERO */
+.hero-card{background:white;border-radius:12px;border:1px solid #e0e0e0;padding:1.4rem;margin-bottom:1.1rem}
+.hero-photo-wrap{position:relative;width:88px;height:88px;flex-shrink:0;cursor:pointer}
+.hero-photo-wrap:hover .photo-cam{opacity:1}
+.hero-photo{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid #4f46e5}
+.hero-letter{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;color:white}
+.photo-cam{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:.25s;color:white;font-size:0.7rem;gap:2px}
+.strength-ring{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);background:#2ecc71;color:white;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:100px;border:2px solid white;white-space:nowrap}
+.pencil-btn{color:#aaa;font-size:0.85rem;cursor:pointer;padding:0.2rem 0.4rem;border-radius:6px;border:none;background:none;transition:.15s}
+.pencil-btn:hover{color:#4f46e5;background:rgba(79,70,229,.06)}
+.hero-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem 2rem;margin-top:1rem}
+.hero-meta-row{display:flex;align-items:center;gap:.5rem;font-size:.87rem;color:#444;min-width:0}
+.hero-meta-row i{color:#4f46e5;width:14px;font-size:.85rem}
+.verified-icon{color:#2ecc71;font-size:.75rem;margin-left:.2rem}
+
+/* QUICK LINKS */
+.ql-card{background:white;border-radius:12px;border:1px solid #e0e0e0;overflow:hidden}
+.ql-hd{padding:.7rem 1.1rem;font-size:.76rem;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #f0f0f0}
+.ql-item{display:flex;justify-content:space-between;align-items:center;padding:.62rem 1.1rem;border-bottom:1px solid #f5f5f5;font-size:.87rem;color:#333;cursor:pointer;transition:.15s}
+.ql-item:hover{background:#fafafa;color:#4f46e5}
+.ql-item:last-child{border-bottom:none}
+.ql-badge{font-size:.8rem;font-weight:700;color:#4f46e5}
+.ql-done{color:#2ecc71}
+
+/* SECTIONS */
+.pv-sec{background:white;border-radius:12px;border:1px solid #e0e0e0;margin-bottom:1.1rem;overflow:hidden}
+.pv-sec-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.4rem;border-bottom:1px solid #f0f0f0}
+.pv-sec-title{font-size:.97rem;font-weight:800;color:#111}
+.add-btn{display:inline-flex;align-items:center;gap:.4rem;color:#4f46e5;font-weight:700;font-size:.83rem;background:none;border:none;cursor:pointer;padding:.3rem .7rem;border-radius:8px}
+.add-btn:hover{background:rgba(79,70,229,.08)}
+.pv-sec-body{padding:1rem 1.4rem}
+
+/* ITEMS */
+.item-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.8rem 0;border-bottom:1px solid #f5f5f5}
+.item-row:last-child{border-bottom:none;padding-bottom:0}
+.item-title{font-weight:700;color:#111;font-size:.93rem;margin-bottom:.12rem}
+.item-sub{color:#555;font-size:.87rem}
+.item-meta{font-size:.79rem;color:#999;margin-top:.18rem}
+.item-desc{font-size:.84rem;color:#666;line-height:1.7;margin-top:.35rem}
+.del-btn{background:none;border:none;color:#ccc;cursor:pointer;padding:.2rem .4rem;font-size:.82rem}
+.del-btn:hover{color:#ef4444}
+.empty-st{text-align:center;padding:1.4rem;color:#bbb;font-size:.88rem}
+.empty-st i{font-size:1.8rem;display:block;margin-bottom:.4rem;opacity:.25}
+.skill-chip{display:inline-flex;align-items:center;background:#f5f5f5;border:1.5px solid #e0e0e0;color:#333;padding:.35rem .85rem;border-radius:100px;font-size:.84rem;font-weight:500;margin:.2rem}
+.it-tbl{width:100%;border-collapse:collapse}
+.it-tbl th{background:#f9f9f9;padding:.6rem 1rem;text-align:left;font-size:.75rem;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px}
+.it-tbl td{padding:.72rem 1rem;border-top:1px solid #f5f5f5;font-size:.86rem}
+.accom-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid #f5f5f5}
+.accom-row:last-child{border-bottom:none}
+.accom-icon{width:32px;height:32px;border-radius:50%;background:rgba(79,70,229,.08);display:flex;align-items:center;justify-content:center;color:#4f46e5;flex-shrink:0;font-size:.85rem}
+
+/* MODAL */
+.pv-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.pv-modal.open{display:flex}
+.modal-box{background:white;border-radius:16px;padding:1.75rem;max-width:560px;width:92%;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:mpop .25s ease}
+@keyframes mpop{from{opacity:0;transform:scale(.95) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-title{font-size:1.05rem;font-weight:800;color:#111;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;padding-bottom:.9rem;border-bottom:1px solid #f0f0f0}
+.modal-close{background:none;border:none;font-size:1.1rem;color:#aaa;cursor:pointer;line-height:1}
+.modal-close:hover{color:#111}
+.modal-footer{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f0f0f0}
+.form-row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* WORK STATUS RADIO */
+.ws-group{display:flex;gap:1.5rem;margin-bottom:1.25rem}
+.ws-option{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.93rem;color:#333}
+.ws-option input[type=radio]{accent-color:#4f46e5;width:17px;height:17px}
+
+/* NOTICE CHIPS */
+.notice-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.35rem}
+.notice-chip{padding:.45rem 1rem;border:1.5px solid #ddd;border-radius:100px;font-size:.84rem;cursor:pointer;transition:.15s;background:white;color:#333}
+.notice-chip:hover,.notice-chip.selected{border-color:#4f46e5;color:#4f46e5;background:rgba(79,70,229,.06)}
+
+/* PHOTO ZONE */
+.photo-zone{border:2px dashed #ddd;border-radius:10px;padding:1.6rem 1rem;text-align:center;cursor:pointer;transition:.2s;background:#fafafa}
+.photo-zone:hover{border-color:#4f46e5;background:rgba(79,70,229,.02)}
+.photo-zone input{display:none}
+.resume-row{display:flex;align-items:center;justify-content:space-between;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;padding:.8rem 1rem;margin-bottom:.75rem}
+.file-icon-box{width:36px;height:36px;background:#fee2e2;border-radius:8px;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:900px){.pv-wrap{grid-template-columns:1fr}.hero-meta-grid{grid-template-columns:1fr}.form-row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}" class="nav-brand"><i class="fas fa-briefcase" style="font-size:1.4rem"></i> NaukriHub</a>
+  <div class="nav-links">
+    <a th:href="@{/jobs}">Browse Jobs</a>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/profile/view}" class="active">Profile</a>
+    <a th:href="@{/logout}">Logout</a>
+  </div>
+</nav>
+
+<div class="pv-wrap">
+
+  <!-- LEFT -->
+  <aside>
+    <div class="hero-card">
+      <!-- Photo -->
+      <div style="display:flex;align-items:flex-start;gap:1rem">
+        <div class="hero-photo-wrap" onclick="openModal('photoModal')">
+          <img th:if="${user.profilePhotoFileName}" th:src="@{/photo/{f}(f=${user.profilePhotoFileName})}" class="hero-photo" alt="Photo">
+          <div th:unless="${user.profilePhotoFileName}" class="hero-letter" th:text="${#strings.substring(user.fullName,0,1)}">A</div>
+          <div class="photo-cam"><i class="fas fa-camera" style="font-size:1.1rem"></i><span>Change</span></div>
+          <span class="strength-ring" id="ringStr">0%</span>
+        </div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:.4rem">
+            <span style="font-size:1.15rem;font-weight:800;color:#111" th:text="${user.fullName}">Name</span>
+            <button class="pencil-btn" onclick="openModal('basicModal')"><i class="fas fa-pencil"></i></button>
+          </div>
+          <p style="font-size:.78rem;color:#aaa;margin-top:.15rem">Profile last updated · Today</p>
+          <p th:if="${user.resumeHeadline}" style="font-size:.84rem;color:#555;margin-top:.25rem;font-style:italic" th:text="${user.resumeHeadline}"></p>
+        </div>
+      </div>
+      <!-- Meta -->
+      <div class="hero-meta-grid">
+        <div class="hero-meta-row" th:if="${user.location}"><i class="fas fa-map-marker-alt"></i><span th:text="${user.location}+', INDIA'">Loc</span></div>
+        <div class="hero-meta-row" th:if="${user.phone}"><i class="fas fa-phone"></i><span th:text="${user.phone}">Phone</span><i class="fas fa-check-circle verified-icon"></i></div>
+        <div class="hero-meta-row" style="grid-column:1/-1"><i class="fas fa-envelope" style="flex-shrink:0"></i><span th:text="${user.email}" style="min-width:0;flex:1;font-size:0.82rem">Email</span><i class="fas fa-check-circle verified-icon" style="flex-shrink:0"></i></div>
+        <div class="hero-meta-row" th:if="${user.experience}"><i class="fas fa-briefcase"></i><span th:text="${user.experience}">Exp</span></div>
+        <div class="hero-meta-row" th:if="${user.currentSalary}"><i class="fas fa-indian-rupee-sign"></i><span th:text="${user.currentSalary}">Sal</span></div>
+        <div class="hero-meta-row" th:if="${user.noticePeriod}"><i class="fas fa-calendar-check"></i><span>Available in <span th:text="${user.noticePeriod}">Notice</span></span></div>
+      </div>
+      <!-- Social -->
+      <div th:if="${user.linkedinUrl != null or user.githubUrl != null}" style="display:flex;gap:1rem;margin-top:.8rem;padding-top:.8rem;border-top:1px solid #f0f0f0">
+        <a th:if="${user.linkedinUrl}" th:href="${user.linkedinUrl}" target="_blank" style="display:flex;align-items:center;gap:.35rem;color:#0077B5;font-size:.84rem;font-weight:600"><i class="fab fa-linkedin"></i> LinkedIn</a>
+        <a th:if="${user.githubUrl}"   th:href="${user.githubUrl}"   target="_blank" style="display:flex;align-items:center;gap:.35rem;color:#111;font-size:.84rem;font-weight:600"><i class="fab fa-github"></i> GitHub</a>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="ql-card">
+      <div class="ql-hd">Quick Links</div>
+      <div class="ql-item" onclick="openModal('resumeModal')"><span>Resume</span><span class="ql-badge" th:text="${user.resumeFileName!=null?'Update':'Add'}">Add</span></div>
+      <div class="ql-item" onclick="openModal('headlineModal')"><span>Resume Headline</span><span class="ql-badge" th:classappend="${user.resumeHeadline!=null?' ql-done':''}" th:text="${user.resumeHeadline!=null?'✓':'Add'}">Add</span></div>
+      <div class="ql-item" onclick="openModal('skillsModal')"><span>Key Skills</span><span class="ql-badge" th:classappend="${user.skills!=null?' ql-done':''}" th:text="${user.skills!=null?'✓':'Add'}">Add</span></div>
+      <div class="ql-item" onclick="openModal('empModal')"><span>Employment</span><span class="ql-badge">Add</span></div>
+      <div class="ql-item" onclick="openModal('eduModal')"><span>Education</span><span class="ql-badge">Add</span></div>
+      <div class="ql-item" onclick="openModal('itSkillModal')"><span>IT Skills</span><span class="ql-badge">Add</span></div>
+      <div class="ql-item" onclick="openModal('projModal')"><span>Projects</span><span class="ql-badge">Add</span></div>
+      <div class="ql-item" onclick="openModal('summaryModal')"><span>Profile Summary</span><span class="ql-badge" th:classappend="${user.profileSummary!=null?' ql-done':''}" th:text="${user.profileSummary!=null?'✓':'Add'}">Add</span></div>
+      <div class="ql-item" onclick="openModal('accomModal')"><span>Accomplishments</span><span class="ql-badge">Add</span></div>
+    </div>
+  </aside>
+
+  <!-- RIGHT -->
+  <main>
+    <div th:if="${sectionMsg}" class="alert alert-success" style="margin-bottom:1rem"><i class="fas fa-check-circle"></i> <span th:text="${sectionMsg}">Done!</span></div>
+
+    <!-- RESUME -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title"><i class="fas fa-file-pdf" style="color:#ef4444;margin-right:.4rem"></i>Resume</span><button class="add-btn" onclick="openModal('resumeModal')"><i class="fas fa-upload"></i> Update resume</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${user.resumeFileName}" class="resume-row">
+          <div style="display:flex;align-items:center;gap:.8rem">
+            <div class="file-icon-box"><i class="fas fa-file-pdf" style="color:#ef4444"></i></div>
+            <div><div style="font-weight:700;color:#111;font-size:.88rem" th:text="${user.resumeOriginalName?:'resume.pdf'}">file</div><div style="font-size:.76rem;color:#aaa">Uploaded recently</div></div>
+          </div>
+          <div style="display:flex;gap:.5rem">
+            <a th:href="@{/resume/download/{f}(f=${user.resumeFileName})}" class="btn btn-outline btn-sm"><i class="fas fa-download"></i></a>
+            <form th:action="@{/profile/resume/delete}" method="post" style="margin:0">
+              <button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#ef4444;border:none;cursor:pointer" onclick="return confirm('Delete resume?')"><i class="fas fa-trash"></i></button>
+            </form>
+          </div>
+        </div>
+        <div th:unless="${user.resumeFileName}" class="empty-st"><i class="fas fa-cloud-upload-alt"></i><p>No resume uploaded yet</p><button class="btn btn-primary btn-sm" style="margin-top:.6rem" onclick="openModal('resumeModal')">Upload Resume</button></div>
+      </div>
+    </div>
+
+    <!-- HEADLINE -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title">Resume Headline</span><button class="add-btn" onclick="openModal('headlineModal')"><i class="fas fa-pencil"></i> <span th:text="${user.resumeHeadline!=null?'Edit':'Add'}">Add</span></button></div>
+      <div class="pv-sec-body">
+        <p th:if="${user.resumeHeadline}" style="font-style:italic;color:#333;font-size:.93rem;line-height:1.6" th:text="${user.resumeHeadline}">Headline</p>
+        <p th:unless="${user.resumeHeadline}" style="color:#aaa;font-size:.88rem">Add a headline. e.g. "Java Developer | 3 Years | Spring Boot Expert"</p>
+      </div>
+    </div>
+
+    <!-- KEY SKILLS -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title">Key Skills</span><button class="add-btn" onclick="openModal('skillsModal')"><i class="fas fa-pencil"></i> Edit</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${user.skills}">
+          <th:block th:each="sk : ${#strings.arraySplit(user.skills,',')}">
+            <span class="skill-chip" th:text="${#strings.trim(sk)}">Skill</span>
+          </th:block>
+        </div>
+        <p th:unless="${user.skills}" style="color:#aaa;font-size:.88rem">Add your key skills to be discovered by recruiters.</p>
+      </div>
+    </div>
+
+    <!-- EMPLOYMENT -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title"><i class="fas fa-building" style="color:#4f46e5;margin-right:.4rem"></i>Employment</span><button class="add-btn" onclick="openModal('empModal')"><i class="fas fa-plus"></i> Add employment</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${not #lists.isEmpty(employments)}">
+          <div th:each="emp : ${employments}" class="item-row">
+            <div style="flex:1">
+              <div class="item-title" th:text="${emp.jobTitle}">Title</div>
+              <div class="item-sub" th:text="${emp.companyName}">Co</div>
+              <div class="item-meta"><span th:text="${emp.employmentType}">Type</span><span th:if="${emp.startDate}"> | <span th:text="${#temporals.format(emp.startDate,'MMM yyyy')}"></span></span><span th:if="${emp.currentlyWorking}"> to Present</span><span th:if="${!emp.currentlyWorking and emp.endDate}"> to <span th:text="${#temporals.format(emp.endDate,'MMM yyyy')}"></span></span></div>
+              <div th:if="${emp.description}" class="item-desc" th:text="${emp.description}">Desc</div>
+            </div>
+            <form th:action="@{/profile/employment/delete/{id}(id=${emp.id})}" method="post"><button type="submit" class="del-btn" onclick="return confirm('Remove?')"><i class="fas fa-trash"></i></button></form>
+          </div>
+        </div>
+        <div th:if="${#lists.isEmpty(employments)}" class="empty-st"><i class="fas fa-building"></i>Add your work experience to stand out</div>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title"><i class="fas fa-graduation-cap" style="color:#4f46e5;margin-right:.4rem"></i>Education</span><button class="add-btn" onclick="openModal('eduModal')"><i class="fas fa-plus"></i> Add education</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${not #lists.isEmpty(educations)}">
+          <div th:each="edu : ${educations}" class="item-row">
+            <div style="flex:1">
+              <div class="item-title" th:text="${edu.degree + (edu.fieldOfStudy!=null?' - '+edu.fieldOfStudy:'')}">Degree</div>
+              <div class="item-sub" th:text="${edu.institution}">Inst</div>
+              <div class="item-meta"><span th:if="${edu.startYear}" th:text="${edu.startYear+' - '+(edu.endYear?:'Present')}"></span><span th:if="${edu.studyType}"> | <span th:text="${edu.studyType}"></span></span><span th:if="${edu.grade}"> | <span th:text="${edu.grade}"></span></span></div>
+            </div>
+            <form th:action="@{/profile/education/delete/{id}(id=${edu.id})}" method="post"><button type="submit" class="del-btn" onclick="return confirm('Remove?')"><i class="fas fa-trash"></i></button></form>
+          </div>
+        </div>
+        <div th:if="${#lists.isEmpty(educations)}" class="empty-st"><i class="fas fa-graduation-cap"></i>Add your education details</div>
+      </div>
+    </div>
+
+    <!-- IT SKILLS -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title"><i class="fas fa-laptop-code" style="color:#4f46e5;margin-right:.4rem"></i>IT Skills</span><button class="add-btn" onclick="openModal('itSkillModal')"><i class="fas fa-plus"></i> Add details</button></div>
+      <div th:if="${not #lists.isEmpty(itSkills)}">
+        <table class="it-tbl"><thead><tr><th>Skill</th><th>Version</th><th>Last Used</th><th>Experience</th><th></th></tr></thead>
+        <tbody>
+          <tr th:each="sk : ${itSkills}">
+            <td style="font-weight:700" th:text="${sk.skillName}">Skill</td>
+            <td th:text="${sk.version?:'Latest'}">Lat</td>
+            <td th:text="${sk.lastUsed?:'-'}">2025</td>
+            <td th:text="${sk.experience?:'-'}">Exp</td>
+            <td><form th:action="@{/profile/itskill/delete/{id}(id=${sk.id})}" method="post"><button type="submit" class="del-btn"><i class="fas fa-trash"></i></button></form></td>
+          </tr>
+        </tbody></table>
+      </div>
+      <div th:if="${#lists.isEmpty(itSkills)}" class="empty-st" style="padding:1.2rem 1.4rem"><i class="fas fa-laptop-code"></i>Add IT skills with version &amp; experience</div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title"><i class="fas fa-code-branch" style="color:#4f46e5;margin-right:.4rem"></i>Projects</span><button class="add-btn" onclick="openModal('projModal')"><i class="fas fa-plus"></i> Add project</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${not #lists.isEmpty(projects)}">
+          <div th:each="proj : ${projects}" class="item-row">
+            <div style="flex:1">
+              <div class="item-title" th:text="${proj.title}">Title</div>
+              <div th:if="${proj.technologies}" style="font-size:.81rem;color:#4f46e5;margin:.12rem 0"><i class="fas fa-code" style="font-size:.74rem"></i> <span th:text="${proj.technologies}">Tech</span></div>
+              <div th:if="${proj.startYear}" class="item-meta" th:text="${proj.startYear+(proj.endYear!=null?' - '+proj.endYear:'')}">Year</div>
+              <div th:if="${proj.description}" class="item-desc" th:text="${proj.description}">Desc</div>
+              <a th:if="${proj.projectUrl}" th:href="${proj.projectUrl}" target="_blank" style="font-size:.81rem;color:#4f46e5;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;margin-top:.4rem"><i class="fas fa-external-link-alt"></i> View</a>
+            </div>
+            <form th:action="@{/profile/project/delete/{id}(id=${proj.id})}" method="post"><button type="submit" class="del-btn" onclick="return confirm('Remove?')"><i class="fas fa-trash"></i></button></form>
+          </div>
+        </div>
+        <div th:if="${#lists.isEmpty(projects)}" class="empty-st"><i class="fas fa-code-branch"></i>Add projects to showcase your work</div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title">Profile Summary</span><button class="add-btn" onclick="openModal('summaryModal')"><i class="fas fa-pencil"></i> <span th:text="${user.profileSummary!=null?'Edit':'Add'}">Add</span></button></div>
+      <div class="pv-sec-body">
+        <p th:if="${user.profileSummary}" style="color:#444;font-size:.92rem;line-height:1.8" th:text="${user.profileSummary}">Summary</p>
+        <p th:unless="${user.profileSummary}" style="color:#aaa;font-size:.88rem">Add a professional summary to help recruiters know you better.</p>
+      </div>
+    </div>
+
+    <!-- ACCOMPLISHMENTS -->
+    <div class="pv-sec">
+      <div class="pv-sec-hd"><span class="pv-sec-title">Accomplishments</span><button class="add-btn" onclick="openModal('accomModal')"><i class="fas fa-plus"></i> Add</button></div>
+      <div class="pv-sec-body">
+        <div th:if="${user.linkedinUrl!=null or user.githubUrl!=null or user.portfolioUrl!=null}">
+          <div th:if="${user.linkedinUrl}" class="accom-row"><div class="accom-icon"><i class="fab fa-linkedin"></i></div><div><div style="font-weight:700;font-size:.87rem">Online Profile - LinkedIn</div><a th:href="${user.linkedinUrl}" target="_blank" style="color:#4f46e5;font-size:.82rem" th:text="${user.linkedinUrl}">URL</a></div></div>
+          <div th:if="${user.githubUrl}" class="accom-row"><div class="accom-icon" style="background:#f5f5f5"><i class="fab fa-github" style="color:#111"></i></div><div><div style="font-weight:700;font-size:.87rem">Work Sample - GitHub</div><a th:href="${user.githubUrl}" target="_blank" style="color:#4f46e5;font-size:.82rem" th:text="${user.githubUrl}">URL</a></div></div>
+          <div th:if="${user.portfolioUrl}" class="accom-row"><div class="accom-icon"><i class="fas fa-globe"></i></div><div><div style="font-weight:700;font-size:.87rem">Portfolio</div><a th:href="${user.portfolioUrl}" target="_blank" style="color:#4f46e5;font-size:.82rem" th:text="${user.portfolioUrl}">URL</a></div></div>
+        </div>
+        <p th:if="${user.linkedinUrl==null and user.githubUrl==null and user.portfolioUrl==null}" style="color:#aaa;font-size:.88rem">Add LinkedIn, GitHub, portfolio and more.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ════════ MODALS ════════ -->
+
+<!-- BASIC DETAILS MODAL (Naukri style) -->
+<div class="pv-modal" id="basicModal">
+<div class="modal-box">
+  <div class="modal-title">Basic details <button class="modal-close" onclick="closeModal('basicModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <!-- Name -->
+    <div class="form-group">
+      <label class="form-label">Name <span style="color:red">*</span></label>
+      <input type="text" name="fullName" class="form-control" th:value="${user.fullName}" required>
+    </div>
+    <!-- Work Status -->
+    <div class="form-group">
+      <label class="form-label" style="margin-bottom:.6rem">Work status</label>
+      <p style="font-size:.8rem;color:#888;margin-bottom:.6rem">We will personalise your NaukriHub experience based on this</p>
+      <div class="ws-group">
+        <label class="ws-option"><input type="radio" name="workStatus" value="Fresher" th:checked="${user.workStatus == 'Fresher'}"> Fresher</label>
+        <label class="ws-option"><input type="radio" name="workStatus" value="Experienced" th:checked="${user.workStatus != 'Fresher'}"> Experienced</label>
+      </div>
+    </div>
+    <!-- Total Experience -->
+    <div class="form-group">
+      <label class="form-label">Total experience <span style="color:red">*</span></label>
+      <p style="font-size:.8rem;color:#888;margin-bottom:.5rem">This helps recruiters know your years of experience</p>
+      <div class="form-row2">
+        <select name="experienceYears" class="form-select">
+          <option value="0" th:selected="${user.experienceYears=='0' or user.experienceYears==null}">0 Year</option>
+          <th:block th:each="y : ${#numbers.sequence(1,30)}">
+            <option th:value="${y}" th:selected="${user.experienceYears==y.toString()}" th:text="${y+' Year'}">Y</option>
+          </th:block>
+        </select>
+        <select name="experienceMonths" class="form-select">
+          <option value="0" th:selected="${user.experienceMonths=='0' or user.experienceMonths==null}">0 Month</option>
+          <th:block th:each="m : ${#numbers.sequence(1,11)}">
+            <option th:value="${m}" th:selected="${user.experienceMonths==m.toString()}" th:text="${m+' Month'}">M</option>
+          </th:block>
+        </select>
+      </div>
+    </div>
+    <!-- Current Salary -->
+    <div class="form-group">
+      <label class="form-label">Current salary <span style="color:red">*</span></label>
+      <p style="font-size:.8rem;color:#888;margin-bottom:.5rem">Salary information helps us find relevant jobs for you</p>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <span style="background:#f5f5f5;border:1.5px solid #ddd;border-radius:8px;padding:.7rem .9rem;font-size:.9rem;font-weight:600;color:#555">₹</span>
+        <input type="text" name="currentSalary" class="form-control" th:value="${user.currentSalary}" placeholder="e.g. 400000" style="flex:1">
+      </div>
+    </div>
+    <!-- Location -->
+    <div class="form-group">
+      <label class="form-label">Current location <span style="color:red">*</span></label>
+      <p style="font-size:.8rem;color:#888;margin-bottom:.5rem">This helps us match you to relevant jobs</p>
+      <input type="text" name="location" class="form-control" th:value="${user.location}" placeholder="City, State">
+    </div>
+    <!-- Phone -->
+    <div class="form-group">
+      <label class="form-label">Mobile number</label>
+      <input type="tel" name="phone" class="form-control" th:value="${user.phone}" placeholder="+91 XXXXX XXXXX">
+    </div>
+    <!-- Notice Period chips -->
+    <div class="form-group">
+      <label class="form-label">Availability to join</label>
+      <p style="font-size:.8rem;color:#888;margin-bottom:.5rem">Lets recruiters know your availability</p>
+      <div class="notice-chips" id="noticeChips">
+        <button type="button" class="notice-chip" th:classappend="${user.noticePeriod=='15 Days or less'?' selected':''}" onclick="selectNotice(this,'15 Days or less')">15 Days or less</button>
+        <button type="button" class="notice-chip" th:classappend="${user.noticePeriod=='1 Month'?' selected':''}" onclick="selectNotice(this,'1 Month')">1 Month</button>
+        <button type="button" class="notice-chip" th:classappend="${user.noticePeriod=='2 Months'?' selected':''}" onclick="selectNotice(this,'2 Months')">2 Months</button>
+        <button type="button" class="notice-chip" th:classappend="${user.noticePeriod=='3 Months'?' selected':''}" onclick="selectNotice(this,'3 Months')">3 Months</button>
+        <button type="button" class="notice-chip" th:classappend="${user.noticePeriod=='More than 3 Months'?' selected':''}" onclick="selectNotice(this,'More than 3 Months')">More than 3 Months</button>
+      </div>
+      <input type="hidden" name="noticePeriod" id="noticePeriodVal" th:value="${user.noticePeriod}">
+    </div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('basicModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary" style="padding:.75rem 2rem">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="pv-modal" id="photoModal">
+<div class="modal-box" style="max-width:420px">
+  <div class="modal-title">Profile Photo <button class="modal-close" onclick="closeModal('photoModal')">✕</button></div>
+  <div th:if="${user.profilePhotoFileName}" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem;background:#fafafa;padding:.8rem;border-radius:10px">
+    <img th:src="@{/photo/{f}(f=${user.profilePhotoFileName})}" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid #4f46e5" alt="">
+    <div style="flex:1"><p style="font-weight:700;font-size:.87rem">Current photo</p></div>
+    <form th:action="@{/profile/photo/delete}" method="post" style="margin:0">
+      <button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#ef4444;border:none;cursor:pointer" onclick="return confirm('Delete photo?')"><i class="fas fa-trash"></i> Delete</button>
+    </form>
+  </div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+    <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+    <input type="hidden" name="skills"         th:value="${user.skills}">
+    <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+    <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+    <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+    <label class="photo-zone" for="photoModalFile">
+      <input type="file" name="photoFile" id="photoModalFile" accept=".jpg,.jpeg,.png,.webp" onchange="previewPhoto(this)">
+      <i class="fas fa-user-circle" style="font-size:2.5rem;color:#4f46e5;display:block;margin-bottom:.5rem"></i>
+      <div style="font-weight:700;color:#333;font-size:.9rem" id="photoModalTxt">Click to select photo</div>
+      <div style="font-size:.77rem;color:#aaa;margin-top:.2rem">JPG, PNG, WEBP · Max 5MB</div>
+    </label>
+    <div id="photoPreviewWrap" style="display:none;text-align:center;margin-top:.75rem">
+      <img id="photoPreviewImg" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #4f46e5" src="" alt="">
+      <p style="font-size:.79rem;color:green;margin-top:.35rem;font-weight:600">✅ Ready to upload</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('photoModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- RESUME MODAL -->
+<div class="pv-modal" id="resumeModal">
+<div class="modal-box" style="max-width:440px">
+  <div class="modal-title">Upload Resume <button class="modal-close" onclick="closeModal('resumeModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+    <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+    <input type="hidden" name="skills"         th:value="${user.skills}">
+    <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+    <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+    <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+    <div th:if="${user.resumeFileName}" style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;background:#f9f9f9;padding:.8rem;border-radius:8px">
+      <div class="file-icon-box"><i class="fas fa-file-pdf" style="color:#ef4444"></i></div>
+      <div style="flex:1"><div style="font-weight:700;font-size:.87rem" th:text="${user.resumeOriginalName?:'resume.pdf'}">file</div></div>
+      <form th:action="@{/profile/resume/delete}" method="post" style="margin:0">
+        <button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#ef4444;border:none;cursor:pointer" onclick="return confirm('Delete resume?')"><i class="fas fa-trash"></i></button>
+      </form>
+    </div>
+    <label class="photo-zone" for="resumeModalFile">
+      <input type="file" name="resumeFile" id="resumeModalFile" accept=".pdf,.doc,.docx" onchange="resumeSelected(this)">
+      <i class="fas fa-cloud-upload-alt" style="font-size:2.5rem;color:#4f46e5;display:block;margin-bottom:.5rem"></i>
+      <div style="font-weight:700;color:#333;font-size:.9rem" id="resumeModalTxt">Click to upload resume</div>
+      <div style="font-size:.77rem;color:#aaa;margin-top:.2rem">PDF, DOC, DOCX · Max 10MB · Supported formats: doc, docx, rtf, pdf</div>
+    </label>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('resumeModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- HEADLINE MODAL -->
+<div class="pv-modal" id="headlineModal">
+<div class="modal-box" style="max-width:480px">
+  <div class="modal-title">Resume Headline <button class="modal-close" onclick="closeModal('headlineModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+    <input type="hidden" name="skills"         th:value="${user.skills}">
+    <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+    <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+    <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+    <div class="form-group">
+      <input type="text" name="resumeHeadline" class="form-control" th:value="${user.resumeHeadline}" placeholder='"Java Developer | 3 Years | Spring Boot Expert"' maxlength="200">
+      <p class="form-hint">Shown prominently on your profile</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('headlineModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- SKILLS MODAL -->
+<div class="pv-modal" id="skillsModal">
+<div class="modal-box" style="max-width:480px">
+  <div class="modal-title">Key Skills <button class="modal-close" onclick="closeModal('skillsModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+    <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+    <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+    <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+    <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+    <div class="form-group">
+      <label class="form-label">Skills (comma separated)</label>
+      <input type="text" name="skills" class="form-control" th:value="${user.skills}" placeholder="Java, Spring Boot, MySQL, React">
+      <p class="form-hint">Separate each skill with a comma</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('skillsModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- SUMMARY MODAL -->
+<div class="pv-modal" id="summaryModal">
+<div class="modal-box">
+  <div class="modal-title">Profile Summary <button class="modal-close" onclick="closeModal('summaryModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+    <input type="hidden" name="skills"         th:value="${user.skills}">
+    <input type="hidden" name="linkedinUrl"    th:value="${user.linkedinUrl}">
+    <input type="hidden" name="githubUrl"      th:value="${user.githubUrl}">
+    <input type="hidden" name="portfolioUrl"   th:value="${user.portfolioUrl}">
+    <div class="form-group"><textarea name="profileSummary" class="form-control" rows="6" th:text="${user.profileSummary}" placeholder="Write a brief professional summary..."></textarea></div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('summaryModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- ACCOMPLISHMENTS MODAL -->
+<div class="pv-modal" id="accomModal">
+<div class="modal-box">
+  <div class="modal-title">Online Presence &amp; Links <button class="modal-close" onclick="closeModal('accomModal')">✕</button></div>
+  <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="fullName"       th:value="${user.fullName}">
+    <input type="hidden" name="phone"          th:value="${user.phone}">
+    <input type="hidden" name="location"       th:value="${user.location}">
+    <input type="hidden" name="workStatus"     th:value="${user.workStatus}">
+    <input type="hidden" name="experienceYears"  th:value="${user.experienceYears}">
+    <input type="hidden" name="experienceMonths" th:value="${user.experienceMonths}">
+    <input type="hidden" name="currentSalary"  th:value="${user.currentSalary}">
+    <input type="hidden" name="noticePeriod"   th:value="${user.noticePeriod}">
+    <input type="hidden" name="resumeHeadline" th:value="${user.resumeHeadline}">
+    <input type="hidden" name="profileSummary" th:value="${user.profileSummary}">
+    <input type="hidden" name="skills"         th:value="${user.skills}">
+    <div class="form-group"><label class="form-label"><i class="fab fa-linkedin" style="color:#0077B5"></i> LinkedIn URL</label><input type="url" name="linkedinUrl" class="form-control" th:value="${user.linkedinUrl}" placeholder="https://linkedin.com/in/yourname"></div>
+    <div class="form-group"><label class="form-label"><i class="fab fa-github"></i> GitHub URL</label><input type="url" name="githubUrl" class="form-control" th:value="${user.githubUrl}" placeholder="https://github.com/yourname"></div>
+    <div class="form-group"><label class="form-label"><i class="fas fa-globe"></i> Portfolio URL</label><input type="url" name="portfolioUrl" class="form-control" th:value="${user.portfolioUrl}" placeholder="https://yoursite.com"></div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('accomModal')" class="btn btn-ghost">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- EMPLOYMENT MODAL -->
+<div class="pv-modal" id="empModal">
+<div class="modal-box">
+  <div class="modal-title">Add Employment <button class="modal-close" onclick="closeModal('empModal')">✕</button></div>
+  <form th:action="@{/profile/employment/add}" method="post">
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Job Title *</label><input type="text" name="jobTitle" class="form-control" placeholder="e.g. Java Developer" required></div>
+      <div class="form-group"><label class="form-label">Company *</label><input type="text" name="companyName" class="form-control" placeholder="Company name" required></div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Type</label><select name="employmentType" class="form-select"><option>Full-time</option><option>Part-time</option><option>Internship</option><option>Freelance</option></select></div>
+      <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control" placeholder="City"></div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="startDate" class="form-control"></div>
+      <div class="form-group"><label class="form-label">End Date</label><input type="date" name="endDate" class="form-control" id="empEnd"></div>
+    </div>
+    <div class="form-group"><label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.88rem"><input type="checkbox" name="currentlyWorking" value="true" onchange="document.getElementById('empEnd').disabled=this.checked"> Currently working here</label></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" placeholder="Describe your role..."></textarea></div>
+    <div class="modal-footer"><button type="button" onclick="closeModal('empModal')" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+  </form>
+</div>
+</div>
+
+<!-- EDUCATION MODAL -->
+<div class="pv-modal" id="eduModal">
+<div class="modal-box">
+  <div class="modal-title">Add Education <button class="modal-close" onclick="closeModal('eduModal')">✕</button></div>
+  <form th:action="@{/profile/education/add}" method="post">
+    <div class="form-group"><label class="form-label">Degree *</label>
+      <select name="degree" class="form-select" required><option value="">Select</option><option>Class X</option><option>Class XII</option><option>Diploma</option><option>B.Tech / B.E.</option><option>BCA</option><option>B.Sc</option><option>B.Com</option><option>BA</option><option>MCA</option><option>M.Tech</option><option>MBA/PGDM</option><option>M.Sc</option><option>PhD</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Field / Specialization</label><input type="text" name="fieldOfStudy" class="form-control" placeholder="e.g. Computer Science"></div>
+    <div class="form-group"><label class="form-label">Institution *</label><input type="text" name="institution" class="form-control" placeholder="College / University" required></div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Start Year</label><input type="text" name="startYear" class="form-control" placeholder="2018"></div>
+      <div class="form-group"><label class="form-label">End Year</label><input type="text" name="endYear" class="form-control" placeholder="2022"></div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Study Type</label><select name="studyType" class="form-select"><option value="">Select</option><option>Full Time</option><option>Part Time</option><option>Distance</option></select></div>
+      <div class="form-group"><label class="form-label">Grade / CGPA</label><input type="text" name="grade" class="form-control" placeholder="e.g. 8.5 CGPA"></div>
+    </div>
+    <div class="modal-footer"><button type="button" onclick="closeModal('eduModal')" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+  </form>
+</div>
+</div>
+
+<!-- IT SKILL MODAL -->
+<div class="pv-modal" id="itSkillModal">
+<div class="modal-box" style="max-width:460px">
+  <div class="modal-title">Add IT Skill <button class="modal-close" onclick="closeModal('itSkillModal')">✕</button></div>
+  <form th:action="@{/profile/itskill/add}" method="post">
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Skill *</label><input type="text" name="skillName" class="form-control" placeholder="e.g. Java" required></div>
+      <div class="form-group"><label class="form-label">Version</label><input type="text" name="version" class="form-control" placeholder="Latest"></div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Last Used</label><input type="text" name="lastUsed" class="form-control" placeholder="2025"></div>
+      <div class="form-group"><label class="form-label">Experience</label><input type="text" name="experience" class="form-control" placeholder="2 Years"></div>
+    </div>
+    <div class="modal-footer"><button type="button" onclick="closeModal('itSkillModal')" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+  </form>
+</div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="pv-modal" id="projModal">
+<div class="modal-box">
+  <div class="modal-title">Add Project <button class="modal-close" onclick="closeModal('projModal')">✕</button></div>
+  <form th:action="@{/profile/project/add}" method="post">
+    <div class="form-group"><label class="form-label">Project Title *</label><input type="text" name="title" class="form-control" placeholder="Project name" required></div>
+    <div class="form-group"><label class="form-label">Technologies</label><input type="text" name="technologies" class="form-control" placeholder="Java, Spring Boot, MySQL"></div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-label">Start Year</label><input type="text" name="startYear" class="form-control" placeholder="2024"></div>
+      <div class="form-group"><label class="form-label">End Year</label><input type="text" name="endYear" class="form-control" placeholder="2025"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Project URL</label><input type="url" name="projectUrl" class="form-control" placeholder="https://github.com/..."></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" placeholder="What did you build?"></textarea></div>
+    <div class="modal-footer"><button type="button" onclick="closeModal('projModal')" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+  </form>
+</div>
+</div>
+
+<!-- Profile Strength data -->
+<div id="pvData" style="display:none"
+     th:data-name="${user.fullName}"
+     th:data-phone="${user.phone}"
+     th:data-loc="${user.location}"
+     th:data-skills="${user.skills}"
+     th:data-exp="${user.experience}"
+     th:data-resume="${user.resumeFileName}"
+     th:data-photo="${user.profilePhotoFileName}"
+     th:data-headline="${user.resumeHeadline}"
+     th:data-summary="${user.profileSummary}"
+     th:data-salary="${user.currentSalary}">
+</div>
+
+<footer class="footer" style="margin-top:0"><div class="container"><div class="footer-bottom"><span class="footer-copy">© 2025 NaukriHub. Made with ❤️ in India</span></div></div></footer>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+function openModal(id)  { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.pv-modal').forEach(m => m.addEventListener('click', e => { if(e.target===m) closeModal(m.id); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.pv-modal.open').forEach(m=>closeModal(m.id)); });
+
+// Notice period chip selection
+function selectNotice(btn, val) {
+  document.querySelectorAll('.notice-chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('noticePeriodVal').value = val;
+}
+
+// Photo preview
+function previewPhoto(input) {
+  if (!input.files[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('photoPreviewImg').src = e.target.result;
+    document.getElementById('photoPreviewWrap').style.display = 'block';
+    document.getElementById('photoModalTxt').textContent = '✅ ' + input.files[0].name;
+  };
+  r.readAsDataURL(input.files[0]);
+}
+function resumeSelected(input) {
+  if (input.files[0]) document.getElementById('resumeModalTxt').textContent = '✅ ' + input.files[0].name;
+}
+
+// Profile Strength
+window.addEventListener('load', () => {
+  const d = document.getElementById('pvData');
+  if (!d) return;
+  const vals = ['name','phone','loc','skills','exp','resume','photo','headline','summary','salary'].map(k => d.dataset[k]);
+  const filled = vals.filter(v => v && v.trim() && v !== 'null').length;
+  const pct = Math.round((filled / vals.length) * 100);
+  setTimeout(() => { document.getElementById('ringStr').textContent = pct + '%'; }, 500);
+});
+</script>
+</body>
+</html>
