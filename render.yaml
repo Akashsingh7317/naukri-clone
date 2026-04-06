@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: naukri-clone
+    env: java
+    buildCommand: mvn clean install
+    startCommand: java -jar target/*.jar
