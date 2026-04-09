@@ -21,14 +21,14 @@ public class JobController {
     @Autowired
     private UserService userService;
 
-    // POST JOB FORM
+    // POST JOB FORM..
     @GetMapping("/employer/post-job")
     public String postJobForm(Model model) {
         model.addAttribute("job", new Job());
         return "post-job";
     }
 
-    // SAVE JOB
+    // SAVE JOB..
     @PostMapping("/employer/post-job")
     public String postJob(@ModelAttribute Job job, Authentication authentication) {
         User employer = userService.findByEmail(authentication.getName()).orElseThrow();
@@ -37,7 +37,7 @@ public class JobController {
         return "redirect:/dashboard?jobPosted=true";
     }
 
-    // APPLY JOB
+    // APPLY JOB..
     @PostMapping("/jobs/{id}/apply")
     public String applyForJob(@PathVariable Long id,
                              @RequestParam(required = false) String coverLetter,
@@ -66,7 +66,7 @@ public class JobController {
         return "applications";
     }
 
-    // UPDATE STATUS
+    // UPDATE STATUS....
     @PostMapping("/employer/applications/{appId}/status")
     public String updateStatus(@PathVariable Long appId,
                               @RequestParam JobApplication.ApplicationStatus status,
@@ -75,7 +75,7 @@ public class JobController {
         return "redirect:/employer/applications/" + jobId;
     }
 
-    // EDIT JOB
+    // EDIT JOB...
     @GetMapping("/employer/edit-job/{id}")
     public String editJobForm(@PathVariable Long id, Model model) {
         Job job = jobService.findById(id).orElseThrow();
@@ -101,7 +101,7 @@ public class JobController {
         return "redirect:/dashboard";
     }
 
-    // DELETE JOB
+    // DELETE JOB...
     @PostMapping("/employer/delete-job/{id}")
     public String deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);

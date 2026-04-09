@@ -15,7 +15,7 @@ public class ItSkill {
     private User user;
 
     private String skillName;
-    private String version;     // Latest, etc.
-    private String lastUsed;    // 2025
-    private String experience;  // 1 Year 2 Months
+    private String version;     
+    private String lastUsed;    
+    private String experience;  
 }

@@ -14,7 +14,7 @@ public class FileUploadService {
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
 
-    // ── RESUME UPLOAD ──
+    //RESUME UPLOAD
     public String saveResume(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) return null;
         String ext = getExtension(file.getOriginalFilename());
@@ -28,7 +28,7 @@ public class FileUploadService {
         return storedName;
     }
 
-    // ── PROFILE PHOTO UPLOAD ──
+    //PROFILE PHOTO UPLOAD
     public String saveProfilePhoto(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) return null;
         String ext = getExtension(file.getOriginalFilename());

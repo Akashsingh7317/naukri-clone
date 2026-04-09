@@ -19,6 +19,6 @@ public class Education {
     private String institution;
     private String startYear;
     private String endYear;
-    private String studyType;    // Full Time, Part Time
+    private String studyType;    
     private String grade;
 }

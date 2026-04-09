@@ -27,22 +27,22 @@ public class User {
 
     @Column(length = 1000) private String skills;
 
-    // Experience split: years + months
+   
     private String experienceYears;
     private String experienceMonths;
-    private String experience; // kept for display "X Year Y Months"
+    private String experience; 
 
-    // Work status
-    private String workStatus; // Fresher / Experienced
 
-    // Salary
+    private String workStatus; 
+
+ 
     private String currentSalary;
     private String expectedSalary;
 
-    // Notice period
+ 
     private String noticePeriod;
 
-    // Profile content
+   
     private String resumeHeadline;
     @Column(length = 3000) private String profileSummary;
 

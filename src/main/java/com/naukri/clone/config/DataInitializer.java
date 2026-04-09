@@ -19,7 +19,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() == 0) {
-            // Create demo employer
+            // employer
             User employer = User.builder()
                     .fullName("TechCorp India")
                     .email("employer@demo.com")
@@ -31,7 +31,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(employer);
 
-            // Create demo job seeker
+            //job seeker
             User seeker = User.builder()
                     .fullName("Rahul Sharma")
                     .email("seeker@demo.com")
@@ -45,7 +45,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(seeker);
 
-            // Create demo jobs
+            //jobs
             String[] titles = {"Senior Java Developer", "React Frontend Engineer", "Data Analyst", "Product Manager", "UI/UX Designer", "DevOps Engineer"};
             String[] companies = {"TechCorp India", "Infosys", "TCS", "Wipro", "Flipkart", "Zomato"};
             String[] locations = {"Bangalore", "Mumbai", "Delhi", "Hyderabad", "Pune", "Chennai"};

@@ -21,17 +21,17 @@ public class JobService {
     @Autowired
     private JobApplicationRepository applicationRepository;
 
-    // ✅ POST JOB
+    //POST JOB
     public Job postJob(Job job) {
         return jobRepository.save(job);
     }
 
-    // ✅ GET ALL ACTIVE JOBS
+    //GET ALL ACTIVE JOBS
     public List<Job> getAllActiveJobs() {
         return jobRepository.findByActiveTrueOrderByPostedAtDesc();
     }
 
-    // ✅ SEARCH JOBS (NULL SAFE)
+    //SEARCH JOBS (NULL SAFE)
     public List<Job> searchJobs(String keyword, String location, String category) {
         String kw = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
         String loc = (location != null && !location.trim().isEmpty()) ? location.trim() : null;
@@ -40,25 +40,25 @@ public class JobService {
         return jobRepository.searchJobs(kw, loc, cat);
     }
 
-    // ✅ FIND JOB BY ID
+    //FIND JOB BY ID
     public Optional<Job> findById(Long id) {
         return jobRepository.findById(id);
     }
 
-    // ✅ EMPLOYER JOBS
+    //EMPLOYER JOBS
     public List<Job> getJobsByEmployer(Long employerId) {
         return jobRepository.findByEmployerId(employerId);
     }
 
-    // ✅ APPLY FOR JOB (FULL FIX)
+    //APPLY FOR JOB (FULL FIX)
     public JobApplication applyForJob(Job job, User applicant, String coverLetter) {
 
-        // 🔴 DUPLICATE CHECK
+        //DUPLICATE CHECK
         if (applicationRepository.existsByJobIdAndApplicantId(job.getId(), applicant.getId())) {
             throw new RuntimeException("You have already applied for this job!");
         }
 
-        // ✅ CREATE APPLICATION
+        //CREATE APPLICATION
         JobApplication application = JobApplication.builder()
                 .job(job)
                 .applicant(applicant)
@@ -66,24 +66,24 @@ public class JobService {
                 .status(JobApplication.ApplicationStatus.APPLIED)
                 .build();
 
-        // ✅ SAFE APPLICATION COUNT INCREMENT
+        //SAFE APPLICATION COUNT INCREMENT
         job.setApplicationCount(job.getApplicationCount() + 1);
         jobRepository.save(job);
 
         return applicationRepository.save(application);
     }
 
-    // ✅ USER APPLICATIONS
+    //USER APPLICATIONS
     public List<JobApplication> getApplicationsByUser(Long userId) {
         return applicationRepository.findByApplicantId(userId);
     }
 
-    // ✅ JOB APPLICATIONS
+    //JOB APPLICATIONS
     public List<JobApplication> getApplicationsForJob(Long jobId) {
         return applicationRepository.findByJobId(jobId);
     }
 
-    // ✅ UPDATE STATUS
+    //UPDATE STATUS
     public JobApplication updateApplicationStatus(Long applicationId, JobApplication.ApplicationStatus status) {
         JobApplication app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
@@ -92,17 +92,17 @@ public class JobService {
         return applicationRepository.save(app);
     }
 
-    // ✅ CHECK ALREADY APPLIED (IMPORTANT FOR UI)
+    //CHECK ALREADY APPLIED (IMPORTANT FOR UI)
     public boolean hasApplied(Long jobId, Long userId) {
         return applicationRepository.existsByJobIdAndApplicantId(jobId, userId);
     }
 
-    // ✅ DELETE JOB
+    //DELETE JOB
     public void deleteJob(Long id) {
         jobRepository.deleteById(id);
     }
 
-    // ✅ UPDATE JOB
+    //UPDATE JOB
     public Job updateJob(Job job) {
         return jobRepository.save(job);
     }

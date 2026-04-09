@@ -26,12 +26,12 @@ public class UploadController {
             @RequestParam("resumeFile") MultipartFile file,
             Authentication authentication) throws IOException {
 
-        // 1. Empty file check
+        //Empty file check
         if (file.isEmpty()) {
             return "redirect:/profile?resumeError=empty";
         }
 
-        // 2. File type validation
+        // File type validation
         String contentType = file.getContentType();
         if (contentType == null ||
             (!contentType.equals("application/pdf") &&
@@ -40,25 +40,25 @@ public class UploadController {
             return "redirect:/profile?resumeError=type";
         }
 
-        // 3. Get logged-in user
+        //Get logged-in user
         User user = userService.findByEmail(authentication.getName())
                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 4. Create upload directory if not exists
+        //Create upload directory if not exists
         Files.createDirectories(Paths.get(UPLOAD_DIR));
 
-        // 5. Build unique filename
+        //Build unique filename
         String originalName = file.getOriginalFilename();
         String fileName = "resume_" + user.getId() + "_"
                         + System.currentTimeMillis() + "_" + originalName;
 
-        // 6. Save file to disk
+        //Save file to disk
         Path dest = Paths.get(UPLOAD_DIR + fileName);
         Files.copy(file.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
 
-        // ✅ FIX: Use correct field names from User model
-        user.setResumeFileName(fileName);           // was: setResumeUrl()  ❌
-        user.setResumeOriginalName(originalName);   // store original name for display
+        //Use correct field names from User model
+        user.setResumeFileName(fileName);         
+        user.setResumeOriginalName(originalName);
 
         userService.updateUser(user);
 

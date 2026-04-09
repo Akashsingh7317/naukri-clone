@@ -115,7 +115,7 @@ public class HomeController {
         return "profile-view"; // redirect to full view page
     }
 
-    // ── PROFILE UPDATE (handles all fields) ──
+    //handles all fields
     @PostMapping("/profile/update")
     public String updateProfile(
             @RequestParam(required = false) String fullName,
@@ -155,7 +155,7 @@ public class HomeController {
         if (githubUrl   != null) user.setGithubUrl(githubUrl);
         if (portfolioUrl != null) user.setPortfolioUrl(portfolioUrl);
 
-        // Build experience display string
+        // Build experience  to display string.
         if (experienceYears != null || experienceMonths != null) {
             String yrs = (experienceYears  != null && !experienceYears.isBlank())  ? experienceYears  : "0";
             String mts = (experienceMonths != null && !experienceMonths.isBlank()) ? experienceMonths : "0";
@@ -183,7 +183,7 @@ public class HomeController {
         return "redirect:/profile/view";
     }
 
-    // ── DELETE PHOTO ──
+    //DELETE PHOTO.
     @PostMapping("/profile/photo/delete")
     public String deletePhoto(Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
@@ -193,7 +193,7 @@ public class HomeController {
         return "redirect:/profile/view";
     }
 
-    // ── DELETE RESUME ──
+    //DELETE RESUME..
     @PostMapping("/profile/resume/delete")
     public String deleteResume(Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
@@ -204,7 +204,7 @@ public class HomeController {
         return "redirect:/profile/view";
     }
 
-    // ── FILE SERVE ──
+    //FILE SERVE.
     @GetMapping("/resume/download/{fileName}")
     public ResponseEntity<Resource> downloadResume(@PathVariable String fileName) {
         try {

@@ -19,7 +19,7 @@ public class ProfileSectionController {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private ItSkillRepository itSkillRepo;
 
-    // ── EMPLOYMENT ──
+    //EMPLOYMENT....
     @PostMapping("/employment/add")
     public String addEmployment(@ModelAttribute Employment emp, Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
@@ -36,7 +36,7 @@ public class ProfileSectionController {
         return "redirect:/profile/view";
     }
 
-    // ── EDUCATION ──
+    //EDUCATION...
     @PostMapping("/education/add")
     public String addEducation(@ModelAttribute Education edu, Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
@@ -53,7 +53,7 @@ public class ProfileSectionController {
         return "redirect:/profile/view";
     }
 
-    // ── IT SKILLS ──
+    //IT SKILLS
     @PostMapping("/itskill/add")
     public String addItSkill(@ModelAttribute ItSkill skill, Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
@@ -69,7 +69,7 @@ public class ProfileSectionController {
         return "redirect:/profile/view";
     }
 
-    // ── PROJECTS ──
+    //PROJECTS
     @PostMapping("/project/add")
     public String addProject(@ModelAttribute Project project, Authentication auth, RedirectAttributes ra) {
         User user = userService.findByEmail(auth.getName()).orElseThrow();
