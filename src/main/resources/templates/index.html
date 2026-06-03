@@ -21,7 +21,7 @@
       <a th:href="@{/register}" class="btn-nav-primary"><i class="fas fa-user-plus"></i> <span>Register Free</span></a>
     </div>
     <div sec:authorize="isAuthenticated()" style="display:flex;align-items:center;gap:0.4rem">
-      <a th:href="@{/dashboard}"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+      <a th:href="@{/dashboard}"><i class="fas fa-th-large"></i> <span>Dashboard</div></a>
       <a th:href="@{/profile/view}"><i class="fas fa-user-circle"></i> <span>Profile</span></a>
       <span sec:authorize="hasRole('EMPLOYER')"><a th:href="@{/employer/post-job}" class="btn-nav-primary"><i class="fas fa-plus"></i> <span>Post Job</span></a></span>
       <a th:href="@{/logout}" style="color:#ef4444 !important;font-weight:600"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
@@ -195,7 +195,7 @@
     </div>
     <div class="footer-bottom">
       <span class="footer-copy">© 2025 NaukriHub. All rights reserved.</span>
-      <span class="footer-copy">Made with ❤️ in India</span>
+      <span class="footer-copy">Made with ❤️Akash❤❤ in India</span>
     </div>
   </div>
 </footer>

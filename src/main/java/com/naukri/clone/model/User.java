@@ -27,31 +27,31 @@ public class User {
 
     @Column(length = 1000) private String skills;
 
-   
+    
     private String experienceYears;
     private String experienceMonths;
     private String experience; 
 
-
+   
     private String workStatus; 
 
  
     private String currentSalary;
     private String expectedSalary;
 
- 
+    
     private String noticePeriod;
 
-   
+    
     private String resumeHeadline;
     @Column(length = 3000) private String profileSummary;
 
-    // Social links
+   
     private String linkedinUrl;
     private String githubUrl;
     private String portfolioUrl;
 
-    // Files
+    
     private String resumeFileName;
     private String resumeOriginalName;
     private String profilePhotoFileName;
